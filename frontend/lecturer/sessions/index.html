@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - My Sessions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/lecturer/dashboard">Dashboard</a>
+      <a href="/lecturer/live-class">Live Class</a>
+      <a href="/lecturer/grades">Grades</a>
+      <a href="/lecturer/materials">Materials</a>
+      <a href="/lecturer/sessions" class="active">Past Sessions</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Past Sessions</h1>
+      <p>History of all your conducted live classes</p>
+    </header>
+
+    <!-- STATS -->
+    <div class="cards">
+      <div class="card">
+        <h3 id="totalSessions">0</h3>
+        <p>Total Sessions</p>
+      </div>
+      <div class="card">
+        <h3 id="totalStudentsSeen">0</h3>
+        <p>Total Students Taught</p>
+      </div>
+      <div class="card">
+        <h3 id="avgAttendance">0%</h3>
+        <p>Average Attendance</p>
+      </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-box">
+      <select id="unitFilter">
+        <option value="">All Units</option>
+      </select>
+      <button id="filterBtn">Filter</button>
+    </div>
+
+    <!-- SESSIONS LIST -->
+    <div id="sessionsList">
+      <p class="empty-text">Loading sessions...</p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

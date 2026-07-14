@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Complete Your Profile</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="box">
+      <h1>Welcome to EduCore!</h1>
+      <p class="subtitle">Please complete your profile to continue</p>
+
+      <div id="studentForm">
+        <label>Select Faculty</label>
+        <select id="faculty">
+          <option value="">Select Faculty</option>
+        </select>
+
+        <label>Select Department</label>
+        <select id="department" disabled>
+          <option value="">Select Department first</option>
+        </select>
+
+        <label>Select Course</label>
+        <select id="course" disabled>
+          <option value="">Select Department first</option>
+        </select>
+
+        <button id="saveBtn">Save & Continue</button>
+      </div>
+
+      <div id="lecturerForm" style="display:none">
+        <label>Select Faculty</label>
+        <select id="lecturerFaculty">
+          <option value="">Select Faculty</option>
+        </select>
+
+        <label>Select Department</label>
+        <select id="lecturerDept" disabled>
+          <option value="">Select Faculty first</option>
+        </select>
+
+        <button id="saveLecturerBtn">Save & Continue</button>
+      </div>
+
+      <p class="message" id="message"></p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

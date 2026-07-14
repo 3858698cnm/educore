@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Students</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/students" class="active">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/departments">Departments</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Students</h1>
+      <p>All registered student accounts</p>
+    </header>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Date Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="studentTableBody">
+        <!-- Rows added dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

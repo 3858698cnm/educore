@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Departments</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/students">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/departments" class="active">Departments</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Departments</h1>
+      <p>Manage all departments in the system</p>
+    </header>
+
+    <div class="add-box">
+      <h3>Add New Department</h3>
+      <div class="form-row">
+        <input type="text" id="deptName" placeholder="Department Name (e.g. Computer Science)">
+        <select id="deptFaculty">
+          <option value="">Select Faculty</option>
+        </select>
+        <button id="addBtn">Add Department</button>
+      </div>
+      <p class="message" id="message"></p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Department Name</th>
+          <th>Faculty</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="deptTableBody">
+        <!-- Rows added dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

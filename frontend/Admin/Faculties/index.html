@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Faculties</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/approvals">Approvals</a>
+      <a href="/admin/students">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/departments">Departments</a>
+      <a href="/admin/faculties" class="active">Faculties</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Faculties</h1>
+      <p>Manage all faculties in the system</p>
+    </header>
+
+    <div class="add-box">
+      <h3>Add New Faculty</h3>
+      <div class="form-row">
+        <input type="text" id="facultyName" placeholder="Faculty Name (e.g. Engineering)">
+        <button id="addBtn">Add Faculty</button>
+      </div>
+      <p class="message" id="message"></p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Faculty Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="facultyTableBody">
+        <!-- Rows added dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

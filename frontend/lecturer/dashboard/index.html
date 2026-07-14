@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Lecturer Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/lecturer/dashboard" class="active">Dashboard</a>
+      <a href="/lecturer/live-class">Live Class</a>
+      <a href="/lecturer/grades">Grades</a>
+      <a href="/lecturer/materials">Materials</a>
+      <a href="/lecturer/sessions">Past Sessions</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Welcome, <span id="lecturerName">Lecturer</span></h1>
+      <p id="lecturerDept">Loading your profile...</p>
+    </header>
+
+    <!-- MY UNITS SECTION -->
+    <div class="section">
+      <h2>📚 My Assigned Units</h2>
+      <div id="unitsList" class="units-list">
+        <p class="empty-text">Loading units...</p>
+      </div>
+    </div>
+
+    <!-- ACTIVE CLASS SECTION -->
+    <div class="section">
+      <h2>🔴 Active Live Class</h2>
+      <div id="activeClassBox">
+        <p class="empty-text">No active class right now. Start one from the Live Class page.</p>
+      </div>
+      <a href="/lecturer/live-class" class="start-btn">Start Live Class</a>
+    </div>
+
+    <!-- STATS -->
+    <div class="cards">
+      <div class="card">
+        <h3 id="totalUnits">0</h3>
+        <p>Assigned Units</p>
+      </div>
+      <div class="card">
+        <h3 id="totalSessions">0</h3>
+        <p>Classes Conducted</p>
+      </div>
+      <div class="card">
+        <h3 id="totalStudents">0</h3>
+        <p>Total Students</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

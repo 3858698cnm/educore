@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Attendance Records</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/approvals">Approvals</a>
+      <a href="/admin/students">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/faculties">Faculties</a>
+      <a href="/admin/departments">Departments</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/units">Units</a>
+      <a href="/admin/attendance" class="active">Attendance</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Attendance Records</h1>
+      <p>View all class sessions and student attendance</p>
+    </header>
+
+    <!-- FILTER BOX -->
+    <div class="filter-box">
+      <select id="unitFilter">
+        <option value="">All Units</option>
+      </select>
+      <select id="statusFilter">
+        <option value="">All Statuses</option>
+        <option value="present">Present</option>
+        <option value="partial">Partial</option>
+        <option value="absent">Absent</option>
+      </select>
+      <button id="filterBtn">Filter</button>
+    </div>
+
+    <!-- SESSIONS LIST -->
+    <div id="sessionsList">
+      <p class="empty-text">Loading sessions...</p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

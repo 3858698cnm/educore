@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+   <nav>
+      <a href="/admin/dashboard" class="active">Dashboard</a>
+      <a href="/admin/approvals">Approvals</a>
+      <a href="/admin/students">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/departments">Departments</a>
+      <a href="/admin/faculties">Faculties</a>
+      <a href="/admin/attendance">Attendance</a> 
+    </nav> 
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Welcome, <span id="adminName">Admin</span></h1>
+      <p>Here's your system overview</p>
+    </header>
+
+<div class="cards">
+      <div class="card">
+        <h3 id="totalStudents">0</h3>
+        <p>Total Students</p>
+      </div>
+      <div class="card">
+        <h3 id="totalLecturers">0</h3>
+        <p>Total Lecturers</p>
+      </div>
+      <div class="card">
+        <h3 id="totalFaculties">0</h3>
+        <p>Faculties</p>
+      </div>
+      <div class="card">
+        <h3 id="totalDepartments">0</h3>
+        <p>Departments</p>
+      </div>
+      <div class="card">
+        <h3 id="totalCourses">0</h3>
+        <p>Courses</p>
+      </div>
+      <div class="card">
+        <h3 id="totalUnits">0</h3>
+        <p>Units</p>
+      </div>
+      <div class="card pending">
+        <h3 id="totalPending">0</h3>
+        <p>Pending Approvals</p>
+      </div>
+    </div>
+
+    <div class="quick-links">
+      <a href="/admin/departments" class="link-card">
+        <h3>Manage Departments</h3>
+        <p>Add or edit departments</p>
+      </a>
+      <a href="/admin/courses" class="link-card">
+        <h3>Manage Courses</h3>
+        <p>Add or edit courses</p>
+      </a>
+      <a href="/admin/lecturers" class="link-card">
+        <h3>Manage Lecturers</h3>
+        <p>View and manage lecturer accounts</p>
+      </a>
+      <a href="/admin/students" class="link-card">
+        <h3>Manage Students</h3>
+        <p>View and manage student accounts</p>
+      </a>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

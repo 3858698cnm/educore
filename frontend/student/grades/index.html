@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - My Grades</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/student/dashboard">Dashboard</a>
+      <a href="/student/live-class">Live Class</a>
+      <a href="/student/grades" class="active">Grades</a>
+      <a href="/student/materials">Materials</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>My Grades</h1>
+      <p>View your exam scores, attendance and final grades</p>
+    </header>
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards">
+      <div class="card">
+        <h3 id="totalGraded">0</h3>
+        <p>Graded Units</p>
+      </div>
+      <div class="card">
+        <h3 id="averageScore">0%</h3>
+        <p>Average Score</p>
+      </div>
+      <div class="card">
+        <h3 id="bestGrade">-</h3>
+        <p>Best Grade</p>
+      </div>
+    </div>
+
+    <!-- GRADES TABLE -->
+    <div class="table-box">
+      <h2>Grade Breakdown</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>Code</th>
+            <th>Attendance %</th>
+            <th>Attendance (/10)</th>
+            <th>Exam Score (/90)</th>
+            <th>Final Score (/100)</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody id="gradesTableBody">
+          <tr>
+            <td colspan="7" style="text-align:center;color:#999;">
+              Loading grades...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

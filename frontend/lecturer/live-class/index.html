@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Live Class</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <h2>EduCore Live Class</h2>
+    <a href="/lecturer/dashboard" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <div class="container">
+
+    <!-- SETUP BOX -->
+    <div id="setupBox" class="box">
+      <h2>Start a Live Class</h2>
+
+      <label>Select Unit</label>
+      <select id="unitSelect">
+        <option value="">Select the unit you are teaching</option>
+      </select>
+
+      <label>Class Name / Topic</label>
+      <input type="text" id="className" placeholder="e.g. Introduction to Arrays">
+
+      <div class="media-options">
+        <h3>Before you start</h3>
+        <div class="media-btns">
+          <button id="previewCameraBtn" class="media-btn">
+            📹 Preview Camera
+          </button>
+          <button id="testMicBtn" class="media-btn">
+            🎤 Test Microphone
+          </button>
+        </div>
+        <video id="previewVideo" class="preview-video hidden" autoplay muted playsinline></video>
+        <p id="micStatus" class="mic-status"></p>
+      </div>
+
+      <button id="startBtn">Start Class</button>
+    </div>
+
+    <!-- LIVE BOX -->
+    <div id="liveBox" class="hidden">
+      <div class="live-layout">
+
+        <!-- LEFT: VIDEO AREA -->
+        <div class="video-area">
+          <div class="video-header">
+            <span id="liveClassName">Class Name</span>
+            <span class="live-badge">🔴 LIVE</span>
+          </div>
+
+          <!-- SCREEN SHARE / CAMERA VIEW -->
+          <div class="video-container">
+            <video id="localVideo" autoplay muted playsinline></video>
+            <div id="noVideoMsg" class="no-video-msg">
+              📷 Camera and screen share are off
+            </div>
+          </div>
+
+          <!-- MEDIA CONTROLS -->
+          <div class="controls">
+            <button id="toggleCameraBtn" class="ctrl-btn camera-btn">
+              📹 Camera On
+            </button>
+            <button id="toggleMicBtn" class="ctrl-btn mic-btn">
+              🎤 Mic On
+            </button>
+            <button id="shareScreenBtn" class="ctrl-btn screen-btn">
+              🖥️ Share Screen
+            </button>
+            <button id="stopShareBtn" class="ctrl-btn stop-btn hidden">
+              ⏹ Stop Sharing
+            </button>
+            <button id="endBtn" class="ctrl-btn end-btn">
+              End Class
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: STUDENTS PANEL -->
+        <div class="students-panel">
+          <div class="panel-header">
+            <h3>Students</h3>
+            <div class="stats-row">
+              <span>👥 <span id="studentCount">0</span> joined</span>
+              <span>✓ <span id="checksSentCount">0</span> checks</span>
+            </div>
+          </div>
+
+          <div id="sessionIdBox" class="session-id-box">
+            <p>Session ID:</p>
+            <code id="sessionIdText"></code>
+            <button id="copyBtn" class="copy-btn">Copy</button>
+          </div>
+
+<!-- STUDENT CAMERAS -->
+          <div id="studentCamerasBox" class="student-cameras-box">
+            <p class="no-cameras-text">No student cameras on</p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Responses</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUMMARY BOX -->
+    <div id="summaryBox" class="box hidden">
+      <h2>✅ Class Ended — Attendance Summary</h2>
+      <table id="summaryTable">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Attendance %</th>
+            <th>Final Status</th>
+          </tr>
+        </thead>
+        <tbody id="summaryTableBody"></tbody>
+      </table>
+      <button id="newClassBtn" class="start-btn">Start New Class</button>
+    </div>
+
+  </div>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</html>

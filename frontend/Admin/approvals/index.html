@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Pending Approvals</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/approvals" class="active">Approvals</a>
+      <a href="/admin/students">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/departments">Departments</a>
+      <a href="/admin/faculties">Faculties</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Pending Approvals</h1>
+      <p>Review and approve new account registrations</p>
+    </header>
+
+    <div id="pendingList">
+      <p class="empty-text">No pending approvals at the moment.</p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Materials</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/lecturer/dashboard">Dashboard</a>
+      <a href="/lecturer/live-class">Live Class</a>
+      <a href="/lecturer/grades">Grades</a>
+      <a href="/lecturer/materials" class="active">Materials</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Materials</h1>
+      <p>Upload and manage course materials for your students</p>
+    </header>
+
+    <!-- UPLOAD BOX -->
+    <div class="add-box">
+      <h3>Upload New Material</h3>
+      <div class="form-row">
+        <select id="unitSelect">
+          <option value="">Select Unit</option>
+        </select>
+        <input type="text" id="materialTitle" placeholder="Material Title (e.g. Week 1 Notes)">
+      </div>
+      <div class="form-row">
+        <input type="text" id="materialLink" placeholder="Link or URL (e.g. https://drive.google.com/...)">
+        <button id="uploadBtn">Upload Material</button>
+      </div>
+      <p class="message" id="message"></p>
+    </div>
+
+    <!-- MATERIALS LIST -->
+    <div id="materialsSection">
+      <h2>All Uploaded Materials</h2>
+      <div id="materialsList" class="materials-list">
+        <p class="empty-text">No materials uploaded yet.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Grades</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/lecturer/dashboard">Dashboard</a>
+      <a href="/lecturer/live-class">Live Class</a>
+      <a href="/lecturer/grades" class="active">Grades</a>
+      <a href="/lecturer/materials">Materials</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Grades</h1>
+      <p>Enter exam scores for your students</p>
+    </header>
+
+    <!-- SELECT UNIT -->
+    <div class="filter-box">
+      <label>Select Unit</label>
+      <select id="unitSelect">
+        <option value="">Select a unit to view students</option>
+      </select>
+    </div>
+
+    <!-- STUDENTS TABLE -->
+    <div id="gradesSection" class="hidden">
+      <div class="section-header">
+        <h2 id="selectedUnitName">Unit Name</h2>
+        <p class="note">Exam score is out of 90. Attendance score (out of 10) is calculated automatically.</p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Attendance %</th>
+            <th>Attendance Score (/10)</th>
+            <th>Exam Score (/90)</th>
+            <th>Final Score (/100)</th>
+            <th>Grade</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="gradesTableBody"></tbody>
+      </table>
+    </div>
+
+    <p class="empty-text" id="emptyText">Select a unit above to view and enter grades.</p>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

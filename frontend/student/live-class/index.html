@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Live Class</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <h2>EduCore Live Class</h2>
+    <a href="/student/dashboard" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <div class="container">
+
+    <!-- JOIN BOX -->
+    <div id="joinBox" class="box">
+      <h2>Join a Live Class</h2>
+      <label>Session ID</label>
+      <input type="text" id="sessionId" placeholder="Enter Session ID">
+      <button id="joinBtn">Join Class</button>
+      <p class="message" id="joinMessage"></p>
+    </div>
+
+    <!-- IN CLASS VIEW -->
+    <div id="inClassBox" class="hidden">
+      <div class="class-layout">
+
+        <!-- LEFT: VIDEO AREA -->
+        <div class="video-area">
+          <div class="video-header">
+            <span id="className">Class Name</span>
+            <span class="live-badge">🔴 LIVE</span>
+          </div>
+
+          <!-- VIDEO FROM LECTURER -->
+          <div class="video-container">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div id="noStreamMsg" class="no-stream-msg">
+              ⏳ Waiting for lecturer to share camera or screen...
+            </div>
+          </div>
+
+<!-- STUDENT INFO BAR -->
+          <div class="info-bar">
+            <span>📖 Stay on this page during class</span>
+            <div class="attendance-stats">
+              <span>Checks: <strong id="checksReceived">0</strong></span>
+              <span>Responded: <strong id="checksResponded">0</strong></span>
+            </div>
+          </div>
+
+          <!-- STUDENT CAMERA CONTROLS -->
+          <div class="student-controls">
+            <button id="studentCameraBtn" class="ctrl-btn camera-btn">
+              📹 Turn On Camera
+            </button>
+            <button id="studentMicBtn" class="ctrl-btn mic-btn">
+              🎤 Turn On Mic
+            </button>
+            <video id="studentLocalVideo" class="student-local-video hidden" 
+                   autoplay muted playsinline></video>
+          </div>
+        </div>
+
+        <!-- RIGHT: CLASS INFO -->
+        <div class="info-panel">
+          <h3>Class Info</h3>
+          <p id="classInfoName" class="info-item"></p>
+          <p class="info-tip">
+            💡 An attention check will appear every 30 seconds.
+            Click <strong>YES</strong> to confirm you are present.
+          </p>
+
+          <div class="status-box">
+            <h4>Your Attendance</h4>
+            <div class="att-stats">
+              <div class="att-item">
+                <span id="attChecks">0</span>
+                <small>Checks Sent</small>
+              </div>
+              <div class="att-item">
+                <span id="attResponded">0</span>
+                <small>Responded</small>
+              </div>
+              <div class="att-item">
+                <span id="attPercent">100%</span>
+                <small>Rate</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CLASS ENDED -->
+    <div id="endedBox" class="box hidden">
+      <h2>✅ Class Has Ended</h2>
+      <p>Your attendance has been recorded automatically.</p>
+      <br>
+      <a href="/student/dashboard" class="back-btn">Back to Dashboard</a>
+    </div>
+
+  </div>
+
+  <!-- ATTENTION CHECK NOTIFICATION -->
+  <div id="popupOverlay" class="corner-notification hidden">
+    <div class="notification-icon">⚠️</div>
+    <div class="notification-content">
+      <p class="notification-title">Are you still here?</p>
+      <p class="notification-subtext">Respond within <span id="timer">30</span>s</p>
+    </div>
+    <button id="respondBtn">YES</button>
+  </div>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</html>

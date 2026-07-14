@@ -1,0 +1,206 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f4f6f9;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: #1e293b;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  color: #60a5fa;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.sidebar nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: #334155;
+  color: white;
+}
+
+.sidebar button {
+  padding: 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar button:hover {
+  background: #dc2626;
+}
+
+.main {
+  margin-left: 220px;
+  padding: 30px;
+  flex: 1;
+}
+
+header h1 {
+  color: #1e293b;
+  margin-bottom: 5px;
+}
+
+header p {
+  color: #2563eb;
+  font-size: 14px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  color: #1e293b;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+/* LIVE CLASS CARDS */
+.live-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.live-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid #ef4444;
+}
+
+.live-card h3 {
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.live-card p {
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.live-card small {
+  color: #777;
+  font-size: 12px;
+}
+
+.join-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.join-btn:hover {
+  background: #1d4ed8;
+}
+
+/* UNITS LIST */
+.units-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.unit-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-top: 4px solid #2563eb;
+}
+
+.unit-card h3 {
+  color: #1e293b;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.unit-card .code {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.unit-card .lecturer {
+  color: #777;
+  font-size: 12px;
+}
+
+/* STATS CARDS */
+.cards {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  flex: 1;
+  text-align: center;
+}
+
+.card h3 {
+  font-size: 28px;
+  color: #2563eb;
+}
+
+.card p {
+  color: #777;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.empty-text {
+  color: #999;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 14px;
+}

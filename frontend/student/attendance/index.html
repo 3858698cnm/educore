@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - My Attendance</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/student/dashboard">Dashboard</a>
+      <a href="/student/live-class">Live Class</a>
+      <a href="/student/grades">Grades</a>
+      <a href="/student/materials">Materials</a>
+      <a href="/student/attendance" class="active">My Attendance</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>My Attendance</h1>
+      <p>History of all classes you've attended</p>
+    </header>
+
+    <!-- STATS -->
+    <div class="cards">
+      <div class="card">
+        <h3 id="totalSessions">0</h3>
+        <p>Sessions Attended</p>
+      </div>
+      <div class="card">
+        <h3 id="avgAttendance">0%</h3>
+        <p>Average Attendance</p>
+      </div>
+      <div class="card">
+        <h3 id="avgScore">0/10</h3>
+        <p>Average Score</p>
+      </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-box">
+      <select id="unitFilter">
+        <option value="">All Units</option>
+      </select>
+      <select id="statusFilter">
+        <option value="">All Statuses</option>
+        <option value="present">Present</option>
+        <option value="partial">Partial</option>
+        <option value="absent">Absent</option>
+      </select>
+      <button id="filterBtn">Filter</button>
+    </div>
+
+    <!-- RECORDS LIST -->
+    <div id="recordsList">
+      <p class="empty-text">Loading attendance...</p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - My Materials</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/student/dashboard">Dashboard</a>
+      <a href="/student/live-class">Live Class</a>
+      <a href="/student/grades">Grades</a>
+      <a href="/student/materials" class="active">Materials</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>My Materials</h1>
+      <p>Access all materials uploaded by your lecturers</p>
+    </header>
+
+    <!-- FILTER BY UNIT -->
+    <div class="filter-box">
+      <label>Filter by Unit</label>
+      <select id="unitFilter">
+        <option value="">All Units</option>
+      </select>
+    </div>
+
+    <!-- MATERIALS LIST -->
+    <div id="materialsList" class="materials-list">
+      <p class="empty-text">Loading materials...</p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

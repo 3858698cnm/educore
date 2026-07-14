@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Units</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/approvals">Approvals</a>
+      <a href="/admin/students">Students</a>
+      <a href="/admin/lecturers">Lecturers</a>
+      <a href="/admin/courses">Courses</a>
+      <a href="/admin/units" class="active">Units</a>
+      <a href="/admin/departments">Departments</a>
+      <a href="/admin/faculties">Faculties</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Units</h1>
+      <p>Manage all units/subjects in the system</p>
+    </header>
+
+    <div class="add-box">
+      <h3>Add New Unit</h3>
+      <div class="form-row">
+        <input type="text" id="unitName" placeholder="Unit Name (e.g. Data Structures)">
+        <input type="text" id="unitCode" placeholder="Unit Code (e.g. CS201)">
+      </div>
+      <div class="form-row">
+        <select id="unitCourse">
+          <option value="">Select Course</option>
+        </select>
+        <select id="unitLecturer">
+          <option value="">Select Lecturer</option>
+        </select>
+        <input type="number" id="attendanceWeight" value="10" placeholder="Attendance Weight">
+      </div>
+      <button id="addBtn">Add Unit</button>
+      <p class="message" id="message"></p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Unit Name</th>
+          <th>Code</th>
+          <th>Course</th>
+          <th>Lecturer</th>
+          <th>Attendance Weight</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="unitTableBody"></tbody>
+    </table>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

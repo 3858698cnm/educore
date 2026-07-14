@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EduCore - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Login to EduCore</p>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required>
+
+    <button type="submit">Login</button>
+    </form>
+
+    <p class="message" id="message"></p>
+
+    <p class="forgot"><a href="#" id="forgotLink">Forgot Password?</a></p>
+
+    <p class="switch">Don't have an account? <a href="/register">Register here</a></p>
+
+    <!-- FORGOT PASSWORD BOX (hidden by default) -->
+    <div id="forgotBox" class="forgot-box hidden">
+      <h3>Reset Password</h3>
+      <label>Enter your email</label>
+      <input type="email" id="resetEmail" placeholder="Enter your registered email">
+      <label>New Password</label>
+      <input type="password" id="newPassword" placeholder="Enter new password">
+      <label>Confirm New Password</label>
+      <input type="password" id="confirmPassword" placeholder="Confirm new password">
+      <button id="resetBtn">Reset Password</button>
+      <p class="message" id="resetMessage"></p>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>
