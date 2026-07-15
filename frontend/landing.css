@@ -420,3 +420,59 @@ body {
 .footer .logo {
   font-size: 18px;
 }
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .hero {
+    padding: 120px 20px 60px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  .stats {
+    padding: 40px 20px;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .features,
+  .how-it-works,
+  .live-class-section,
+  .cta {
+    padding: 60px 20px;
+    scroll-margin-top: 80px;
+  }
+
+  .features h2,
+  .how-it-works h2,
+  .live-class-section h2,
+  .cta h2 {
+    font-size: 26px;
+    scroll-margin-top: 80px;
+  }
+
+  .features-grid,
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    padding: 30px 20px;
+  }
+}
