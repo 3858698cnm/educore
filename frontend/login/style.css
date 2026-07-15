@@ -164,6 +164,7 @@ button:hover {
   display: flex;
   align-items: center;
   color: #888;
+   touch-action: manipulation;
 }
 
 .toggle-eye:hover {
