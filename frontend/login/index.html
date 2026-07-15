@@ -16,7 +16,15 @@
       <input type="email" id="email" placeholder="Enter your email" required>
 
       <label>Password</label>
-      <input type="password" id="password" placeholder="Enter your password" required>
+<div class="password-wrapper">
+  <input type="password" id="password" placeholder="Password" required>
+  <span id="togglePassword" class="toggle-eye">
+    <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  </span>
+</div>
 
     <button type="submit">Login</button>
     </form>
