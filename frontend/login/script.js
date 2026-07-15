@@ -1,10 +1,3 @@
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  const messageEl = document.getElementById('message');
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('password');
 const eyeIcon = document.getElementById('eyeIcon');
@@ -18,6 +11,14 @@ togglePassword.addEventListener('click', function() {
     eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
   }
 });
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  const messageEl = document.getElementById('message');
+
   try {
     const response = await fetch('/api/login', {
       method: 'POST',
