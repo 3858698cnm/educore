@@ -36,16 +36,28 @@
 
     <p class="switch">Don't have an account? <a href="/register">Register here</a></p>
 
-    <!-- FORGOT PASSWORD BOX (hidden by default) -->
+   <!-- FORGOT PASSWORD BOX (hidden by default) -->
     <div id="forgotBox" class="forgot-box hidden">
       <h3>Reset Password</h3>
-      <label>Enter your email</label>
-      <input type="email" id="resetEmail" placeholder="Enter your registered email">
-      <label>New Password</label>
-      <input type="password" id="newPassword" placeholder="Enter new password">
-      <label>Confirm New Password</label>
-      <input type="password" id="confirmPassword" placeholder="Confirm new password">
-      <button id="resetBtn">Reset Password</button>
+
+      <!-- STEP 1: Request code -->
+      <div id="requestCodeStep">
+        <label>Enter your email</label>
+        <input type="email" id="resetEmail" placeholder="Enter your registered email">
+        <button id="requestCodeBtn">Send Reset Code</button>
+      </div>
+
+      <!-- STEP 2: Enter code + new password (hidden until code is requested) -->
+      <div id="enterCodeStep" class="hidden">
+        <label>Enter 6-digit code</label>
+        <input type="text" id="resetCode" placeholder="Enter code from email" maxlength="6">
+        <label>New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+        <button id="resetBtn">Reset Password</button>
+      </div>
+
       <p class="message" id="resetMessage"></p>
     </div>
   </div>

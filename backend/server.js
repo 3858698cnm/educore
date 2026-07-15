@@ -6,6 +6,29 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+async function sendEmail(to, subject, html) {
+  try {
+    await transporter.sendMail({
+      from: `"EduCore" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html
+    });
+    console.log('Email sent to', to);
+  } catch (err) {
+    console.log('Email error:', err.message);
+  }
+}
 const path = require('path');
 
 const app = express();
@@ -37,7 +60,9 @@ const userSchema = new mongoose.Schema({
   departmentId: { type: String },
   courseId: { type: String },
   profileComplete: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+ resetCode: { type: String },
+  resetCodeExpires: { type: Date }
 });
 const User = mongoose.model('User', userSchema);
 
@@ -147,7 +172,16 @@ app.post('/api/register', async (req, res) => {
       role,
       status: 'pending'
     });
-    await newUser.save();
+await newUser.save();
+
+    await sendEmail(
+      email,
+      'Welcome to EduCore - Registration Received',
+      `<h2>Hi ${name},</h2>
+       <p>Thank you for registering on EduCore as a <b>${role}</b>.</p>
+       <p>Your account is currently pending admin approval. You'll be able to log in once approved.</p>
+       <p>— The EduCore Team</p>`
+    );
 
     res.status(201).json({ message: 'Account created! Please wait for admin approval before logging in.' });
   } catch (err) {
@@ -192,17 +226,68 @@ app.post('/api/login', async (req, res) => {
 /* =====================
    RESET PASSWORD ROUTE
 ===================== */
-app.post('/api/reset-password', async (req, res) => {
+/* =====================
+   REQUEST PASSWORD RESET CODE
+===================== */
+app.post('/api/request-reset', async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
+    const { email } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'No account found with that email' });
     }
 
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    await User.findByIdAndUpdate(user._id, {
+      resetCode: code,
+      resetCodeExpires: expires
+    });
+
+    await sendEmail(
+      email,
+      'EduCore - Password Reset Code',
+      `<h2>Hi ${user.name},</h2>
+       <p>Your password reset code is:</p>
+       <h1 style="letter-spacing: 4px;">${code}</h1>
+       <p>This code expires in 15 minutes. If you didn't request this, you can ignore this email.</p>
+       <p>— The EduCore Team</p>`
+    );
+
+    res.json({ message: 'Reset code sent to your email' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+/* =====================
+   RESET PASSWORD WITH CODE
+===================== */
+app.post('/api/reset-password', async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'No account found with that email' });
+    }
+
+    if (!user.resetCode || user.resetCode !== code) {
+      return res.status(400).json({ message: 'Invalid reset code' });
+    }
+
+    if (!user.resetCodeExpires || user.resetCodeExpires < new Date()) {
+      return res.status(400).json({ message: 'Reset code has expired. Please request a new one.' });
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+    await User.findByIdAndUpdate(user._id, {
+      password: hashedPassword,
+      resetCode: null,
+      resetCodeExpires: null
+    });
 
     res.json({ message: 'Password reset successfully' });
   } catch (err) {
@@ -238,7 +323,30 @@ app.get('/api/admin/pending', authMiddleware, async (req, res) => {
 app.post('/api/admin/approve', authMiddleware, async (req, res) => {
   try {
     const { userId, status } = req.body;
-    await User.findByIdAndUpdate(userId, { status });
+    const user = await User.findByIdAndUpdate(userId, { status });
+
+    if (user) {
+      if (status === 'approved') {
+        await sendEmail(
+          user.email,
+          'EduCore - Account Approved!',
+          `<h2>Hi ${user.name},</h2>
+           <p>Great news! Your EduCore account has been <b>approved</b>.</p>
+           <p>You can now log in and start using the platform.</p>
+           <p>— The EduCore Team</p>`
+        );
+      } else if (status === 'rejected') {
+        await sendEmail(
+          user.email,
+          'EduCore - Registration Update',
+          `<h2>Hi ${user.name},</h2>
+           <p>We're sorry to inform you that your EduCore registration was not approved.</p>
+           <p>If you believe this is a mistake, please contact your administrator.</p>
+           <p>— The EduCore Team</p>`
+        );
+      }
+    }
+
     res.json({ message: `User ${status} successfully` });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

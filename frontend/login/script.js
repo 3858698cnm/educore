@@ -70,14 +70,50 @@ document.getElementById('forgotLink').addEventListener('click', function(e) {
   box.classList.toggle('hidden');
 });
 
-// Reset password
+// STEP 1: Request reset code
+document.getElementById('requestCodeBtn').addEventListener('click', async function() {
+  const email = document.getElementById('resetEmail').value.trim();
+  const resetMessage = document.getElementById('resetMessage');
+
+  if (!email) {
+    resetMessage.style.color = '#e11d48';
+    resetMessage.textContent = 'Please enter your email';
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/request-reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      resetMessage.style.color = '#16a34a';
+      resetMessage.textContent = 'Code sent! Check your email.';
+      document.getElementById('requestCodeStep').classList.add('hidden');
+      document.getElementById('enterCodeStep').classList.remove('hidden');
+    } else {
+      resetMessage.style.color = '#e11d48';
+      resetMessage.textContent = data.message;
+    }
+  } catch (err) {
+    resetMessage.style.color = '#e11d48';
+    resetMessage.textContent = 'Something went wrong. Try again.';
+  }
+});
+
+// STEP 2: Reset password with code
 document.getElementById('resetBtn').addEventListener('click', async function() {
   const email = document.getElementById('resetEmail').value.trim();
+  const code = document.getElementById('resetCode').value.trim();
   const newPassword = document.getElementById('newPassword').value;
   const confirmPassword = document.getElementById('confirmPassword').value;
   const resetMessage = document.getElementById('resetMessage');
 
-  if (!email || !newPassword || !confirmPassword) {
+  if (!code || !newPassword || !confirmPassword) {
     resetMessage.style.color = '#e11d48';
     resetMessage.textContent = 'Please fill in all fields';
     return;
@@ -99,7 +135,7 @@ document.getElementById('resetBtn').addEventListener('click', async function() {
     const response = await fetch('/api/reset-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, newPassword })
+      body: JSON.stringify({ email, code, newPassword })
     });
 
     const data = await response.json();
@@ -107,11 +143,13 @@ document.getElementById('resetBtn').addEventListener('click', async function() {
     if (response.ok) {
       resetMessage.style.color = '#16a34a';
       resetMessage.textContent = 'Password reset successfully! You can now login.';
-      document.getElementById('resetEmail').value = '';
+      document.getElementById('resetCode').value = '';
       document.getElementById('newPassword').value = '';
       document.getElementById('confirmPassword').value = '';
       setTimeout(() => {
         document.getElementById('forgotBox').classList.add('hidden');
+        document.getElementById('requestCodeStep').classList.remove('hidden');
+        document.getElementById('enterCodeStep').classList.add('hidden');
         resetMessage.textContent = '';
       }, 3000);
     } else {
