@@ -126,6 +126,7 @@ document.getElementById('lecturerFaculty').addEventListener('change', async func
 });
 
 // Save student profile
+// Save student profile
 document.getElementById('saveBtn').addEventListener('click', async function() {
   const facultyId = document.getElementById('faculty').value;
   const departmentId = document.getElementById('department').value;
@@ -152,11 +153,20 @@ document.getElementById('saveBtn').addEventListener('click', async function() {
 
     if (res.ok) {
       localStorage.setItem('profileComplete', 'true');
-      messageEl.style.color = '#16a34a';
-      messageEl.textContent = 'Profile saved! Redirecting...';
-      setTimeout(() => {
-        window.location.href = '/student/dashboard';
-      }, 1000);
+
+      if (data.admissionNumber) {
+        // Hide the form, show the admission number box instead
+        document.getElementById('studentForm').classList.add('hidden');
+        document.getElementById('admissionNumberDisplay').textContent = data.admissionNumber;
+        document.getElementById('admissionBox').classList.remove('hidden');
+        messageEl.textContent = '';
+      } else {
+        messageEl.style.color = '#16a34a';
+        messageEl.textContent = 'Profile saved! Redirecting...';
+        setTimeout(() => {
+          window.location.href = '/student/dashboard';
+        }, 1000);
+      }
     } else {
       messageEl.style.color = '#e11d48';
       messageEl.textContent = data.message;
@@ -166,7 +176,10 @@ document.getElementById('saveBtn').addEventListener('click', async function() {
     messageEl.textContent = 'Something went wrong';
   }
 });
-
+// Continue button on admission number box
+document.getElementById('continueBtn').addEventListener('click', function() {
+  window.location.href = '/student/dashboard';
+});
 // Save lecturer profile
 document.getElementById('saveLecturerBtn').addEventListener('click', async function() {
   const facultyId = document.getElementById('lecturerFaculty').value;

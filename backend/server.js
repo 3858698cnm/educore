@@ -60,7 +60,8 @@ const userSchema = new mongoose.Schema({
   profileComplete: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
  resetCode: { type: String },
-  resetCodeExpires: { type: Date }
+  resetCodeExpires: { type: Date },
+   admissionNumber: { type: String, unique: true, sparse: true }
 });
 const User = mongoose.model('User', userSchema);
 
@@ -191,8 +192,22 @@ app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Email not found' });
+    let user;
+    if (email.includes('/')) {
+      // Admission number login
+      user = await User.findOne({ admissionNumber: email.toUpperCase() });
+      if (!user) return res.status(400).json({ message: 'Admission number not found' });
+    } else {
+      // Email login (admin/lecturer, or student who hasn't completed profile yet)
+      user = await User.findOne({ email });
+      if (!user) return res.status(400).json({ message: 'Email not found' });
+
+      if (user.role === 'student' && user.admissionNumber) {
+        return res.status(400).json({
+          message: 'Please log in with your admission number instead of your email'
+        });
+      }
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Wrong password' });
@@ -665,9 +680,6 @@ app.delete('/api/users/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-/* =====================
-   COMPLETE PROFILE ROUTE
-===================== */
 app.post('/api/complete-profile', authMiddleware, async (req, res) => {
   try {
     const { facultyId, departmentId, courseId } = req.body;
@@ -682,8 +694,35 @@ app.post('/api/complete-profile', authMiddleware, async (req, res) => {
       updateData.courseId = courseId;
     }
 
+    // Generate admission number for students only
+    const user = await User.findById(req.user.id);
+    let admissionNumber = null;
+
+    if (user.role === 'student' && courseId) {
+      const course = await Course.findById(courseId);
+
+      if (course && course.code) {
+        const year = new Date().getFullYear();
+
+        // Count existing students in this course to get the next sequence number
+        const countInCourse = await User.countDocuments({
+          role: 'student',
+          courseId: courseId,
+          admissionNumber: { $exists: true, $ne: null }
+        });
+
+        const sequence = String(countInCourse + 1).padStart(3, '0');
+        admissionNumber = `${course.code}/${sequence}/${year}`;
+        updateData.admissionNumber = admissionNumber;
+      }
+    }
+
     await User.findByIdAndUpdate(req.user.id, updateData);
-    res.json({ message: 'Profile completed successfully' });
+
+    res.json({
+      message: 'Profile completed successfully',
+      admissionNumber
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
