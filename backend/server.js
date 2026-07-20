@@ -77,6 +77,7 @@ const Department = mongoose.model('Department', departmentSchema);
 
 const courseSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  code: { type: String, required: true, unique: true },
   departmentId: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
@@ -550,8 +551,14 @@ app.get('/api/public/courses/:departmentId', async (req, res) => {
 
 app.post('/api/courses', authMiddleware, async (req, res) => {
   try {
-    const { name, departmentId } = req.body;
-    const newCourse = new Course({ name, departmentId });
+    const { name, code, departmentId } = req.body;
+
+    const existing = await Course.findOne({ code: code.toUpperCase() });
+    if (existing) {
+      return res.status(400).json({ message: 'Course code already exists' });
+    }
+
+    const newCourse = new Course({ name, code: code.toUpperCase(), departmentId });
     await newCourse.save();
     res.status(201).json(newCourse);
   } catch (err) {
@@ -567,7 +574,31 @@ app.delete('/api/courses/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+app.put('/api/courses/:id', authMiddleware, async (req, res) => {
+  try {
+    const { name, code, departmentId } = req.body;
 
+    if (code) {
+      const existing = await Course.findOne({
+        code: code.toUpperCase(),
+        _id: { $ne: req.params.id }
+      });
+      if (existing) {
+        return res.status(400).json({ message: 'Course code already exists' });
+      }
+    }
+
+    const updated = await Course.findByIdAndUpdate(
+      req.params.id,
+      { name, code: code ? code.toUpperCase() : undefined, departmentId },
+      { new: true }
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 /* =====================
    UNIT ROUTES
 ===================== */

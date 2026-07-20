@@ -84,20 +84,31 @@ async function loadCourses() {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No courses added yet</td></tr>';
       return;
     }
-
-    courses.forEach(course => {
+courses.forEach(course => {
       const dept = departments.find(d => d._id === course.departmentId);
       const faculty = dept ? faculties.find(f => f._id === dept.facultyId) : null;
 
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${course.name}</td>
+        <td>
+          <input type="text"
+                 value="${course.code || ''}"
+                 id="code-${course._id}"
+                 placeholder="e.g. COM"
+                 maxlength="6"
+                 style="width: 80px; text-transform: uppercase;">
+        </td>
         <td>${dept ? dept.name : '-'}</td>
         <td>${faculty ? faculty.name : '-'}</td>
-        <td><button class="delete-btn" onclick="deleteCourse('${course._id}')">Delete</button></td>
+        <td>
+          <button class="save-btn" onclick="saveCourseCode('${course._id}')">Save Code</button>
+          <button class="delete-btn" onclick="deleteCourse('${course._id}')">Delete</button>
+        </td>
       `;
       tbody.appendChild(row);
     });
+  
   } catch (err) {
     console.log('Error loading courses:', err);
   }
@@ -106,12 +117,13 @@ async function loadCourses() {
 // Add course
 document.getElementById('addBtn').addEventListener('click', async function() {
   const name = document.getElementById('courseName').value.trim();
+  const code = document.getElementById('courseCode').value.trim();
   const departmentId = document.getElementById('courseDept').value;
   const messageEl = document.getElementById('message');
 
-  if (!name || !departmentId) {
+  if (!name || !code || !departmentId) {
     messageEl.style.color = '#e11d48';
-    messageEl.textContent = 'Course name and department are required';
+    messageEl.textContent = 'Course name, code, and department are required';
     return;
   }
 
@@ -122,7 +134,7 @@ document.getElementById('addBtn').addEventListener('click', async function() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({ name, departmentId })
+      body: JSON.stringify({ name, code, departmentId })
     });
 
     const data = await res.json();
@@ -131,6 +143,7 @@ document.getElementById('addBtn').addEventListener('click', async function() {
       messageEl.style.color = '#16a34a';
       messageEl.textContent = 'Course added successfully';
       document.getElementById('courseName').value = '';
+      document.getElementById('courseCode').value = '';
       document.getElementById('courseFaculty').value = '';
       document.getElementById('courseDept').innerHTML = '<option value="">Select Department</option>';
       document.getElementById('courseDept').disabled = true;
@@ -144,6 +157,39 @@ document.getElementById('addBtn').addEventListener('click', async function() {
     messageEl.textContent = 'Something went wrong';
   }
 });
+
+// Save/update a course's code
+async function saveCourseCode(id) {
+  const input = document.getElementById('code-' + id);
+  const code = input.value.trim();
+
+  if (!code) {
+    alert('Please enter a code');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/courses/' + id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ code })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert('Code saved: ' + data.code);
+      loadCourses();
+    } else {
+      alert(data.message);
+    }
+  } catch (err) {
+    alert('Something went wrong');
+  }
+}
 
 // Delete course
 async function deleteCourse(id) {
