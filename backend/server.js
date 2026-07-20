@@ -6,25 +6,21 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
-const nodemailer = require('nodemailer');
+const SibApiV3Sdk = require('sib-api-v3-sdk');
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const apiKey = defaultClient.authentications['api-key'];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const brevoApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 async function sendEmail(to, subject, html) {
   try {
-    await transporter.sendMail({
-      from: `"EduCore" <${process.env.EMAIL_USER}>`,
-      to,
+    await brevoApi.sendTransacEmail({
+      sender: { name: 'EduCore', email: process.env.EMAIL_USER },
+      to: [{ email: to }],
       subject,
-      html
+      htmlContent: html
     });
     console.log('Email sent to', to);
   } catch (err) {
