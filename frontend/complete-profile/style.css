@@ -82,3 +82,38 @@ button:hover {
   margin-top: 15px;
   font-size: 14px;
 }
+.hidden {
+  display: none;
+}
+
+.admission-box {
+  text-align: center;
+  background: #f0fdf4;
+  border: 2px solid #16a34a;
+  border-radius: 10px;
+  padding: 25px;
+  margin-top: 20px;
+}
+
+.admission-box h3 {
+  color: #16a34a;
+  margin-bottom: 10px;
+}
+
+.admission-number {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #1e293b;
+  background: white;
+  border: 1px dashed #16a34a;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.admission-note {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
