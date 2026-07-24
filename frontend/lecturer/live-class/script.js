@@ -47,17 +47,16 @@ socket.on('student-camera-started', (data) => {
   const noText = box.querySelector('.no-cameras-text');
   if (noText) noText.remove();
 
-  if (!document.getElementById('cam-' + studentId)) {
-    const item = document.createElement('div');
-    item.className = 'student-camera-item';
-    item.id = 'cam-' + studentId;
-    item.innerHTML = `
-      <video id="camvideo-${studentId}" autoplay playsinline></video>
-      <div class="student-camera-label">${studentName}</div>
-    `;
-    box.appendChild(item);
-  }
-});
+if (!document.getElementById('cam-' + studentId)) {
+  const item = document.createElement('div');
+  item.className = 'student-camera-item';
+  item.id = 'cam-' + studentId;
+  item.innerHTML = `
+    <video id="camvideo-${studentId}" autoplay playsinline muted></video>
+    <div class="student-camera-label">${studentName}</div>
+  `;
+  box.appendChild(item);
+}
 
 // STUDENT CAMERA STOPPED
 socket.on('student-camera-stopped', (data) => {
@@ -89,13 +88,14 @@ socket.on('student-webrtc-offer', async (data) => {
   studentPeerConnections[studentId] = pc;
 
   // When we receive student stream show in their video element
-  pc.ontrack = (event) => {
-    console.log('Received student camera stream:', studentName);
-    const videoEl = document.getElementById('camvideo-' + studentId);
-    if (videoEl && event.streams && event.streams[0]) {
-      videoEl.srcObject = event.streams[0];
-    }
-  };
+pc.ontrack = (event) => {
+  console.log('Received student camera stream:', studentName);
+  const videoEl = document.getElementById('camvideo-' + studentId);
+  if (videoEl && event.streams && event.streams[0]) {
+    videoEl.srcObject = event.streams[0];
+    videoEl.play().catch(err => console.log('Play blocked:', err));
+  }
+};
 
   // Send ICE candidates back to student
   pc.onicecandidate = (event) => {
@@ -412,6 +412,11 @@ document.getElementById('toggleMicBtn').addEventListener('click', async function
 
 // SHARE SCREEN
 document.getElementById('shareScreenBtn').addEventListener('click', async function() {
+  if (isScreenSharing) {
+    await stopScreenShare();
+    return;
+  }
+
   if (isCameraOn) {
     alert('Turn off camera first');
     return;
@@ -422,9 +427,8 @@ document.getElementById('shareScreenBtn').addEventListener('click', async functi
 
     screenStream = stream;
     isScreenSharing = true;
-
-    this.classList.add('hidden');
-    document.getElementById('stopShareBtn').classList.remove('hidden');
+    this.textContent = '🛑 Stop Sharing';
+    this.classList.add('active');
 
     await rebuildOutgoingStream();
 
@@ -444,8 +448,9 @@ async function stopScreenShare() {
   noVideoMsg.style.display = 'flex';
   isScreenSharing = false;
 
-  document.getElementById('shareScreenBtn').classList.remove('hidden');
-  document.getElementById('stopShareBtn').classList.add('hidden');
+  const btn = document.getElementById('shareScreenBtn');
+  btn.textContent = '🖥️ Share Screen';
+  btn.classList.remove('active');
 
   await rebuildOutgoingStream();
 }
