@@ -57,6 +57,7 @@ if (!document.getElementById('cam-' + studentId)) {
   `;
   box.appendChild(item);
 }
+});
 
 // STUDENT CAMERA STOPPED
 socket.on('student-camera-stopped', (data) => {
