@@ -16,6 +16,7 @@ let students = {};
 
 // WebRTC
 let localStream = null;
+let micTrack = null;
 let screenStream = null;
 let isCameraOn = false;
 let isMicOn = false;
@@ -322,8 +323,44 @@ socket.on('webrtc-ice-candidate', async (data) => {
     }
   }
 });
+async function ensureMicTrack() {
+  if (!micTrack) {
+    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micTrack = micStream.getAudioTracks()[0];
+  }
+  return micTrack;
+}
+
+function getActiveVideoStream() {
+  return screenStream || localStream;
+}
+
+async function rebuildOutgoingStream() {
+  const videoStream = getActiveVideoStream();
+  const combined = new MediaStream();
+
+  if (videoStream) {
+    videoStream.getVideoTracks().forEach(t => combined.addTrack(t));
+  }
+  if (micTrack) {
+    micTrack.enabled = isMicOn;
+    combined.addTrack(micTrack);
+  }
+
+  if (combined.getTracks().length === 0) {
+    for (let socketId in peerConnections) {
+      peerConnections[socketId].close();
+    }
+    peerConnections = {};
+    socket.emit('lecturer-media-stopped', { sessionId });
+    return;
+  }
+
+  await startStreamToStudents(combined);
+}
 
 // TOGGLE CAMERA
+
 document.getElementById('toggleCameraBtn').addEventListener('click', async function() {
   if (isScreenSharing) {
     alert('Stop screen sharing first');
@@ -334,18 +371,13 @@ document.getElementById('toggleCameraBtn').addEventListener('click', async funct
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true
+        audio: false
       });
-
-      stream.getAudioTracks().forEach(track => {
-        track.enabled = isMicOn;
-      });
-
       localStream = stream;
       isCameraOn = true;
       this.textContent = '📹 Camera Off';
       this.classList.add('active');
-      await startStreamToStudents(stream);
+      await rebuildOutgoingStream();
     } catch (err) {
       alert('Could not access camera.');
     }
@@ -359,29 +391,23 @@ document.getElementById('toggleCameraBtn').addEventListener('click', async funct
     isCameraOn = false;
     this.textContent = '📹 Camera On';
     this.classList.remove('active');
-
-    for (let socketId in peerConnections) {
-      peerConnections[socketId].close();
-    }
-    peerConnections = {};
-    socket.emit('lecturer-media-stopped', { sessionId });
+    await rebuildOutgoingStream();
   }
 });
-
 // TOGGLE MICROPHONE
-document.getElementById('toggleMicBtn').addEventListener('click', function() {
-  if (!localStream) {
-    alert('Turn on the camera first to enable audio');
-    return;
+document.getElementById('toggleMicBtn').addEventListener('click', async function() {
+  try {
+    await ensureMicTrack();
+    isMicOn = !isMicOn;
+    micTrack.enabled = isMicOn;
+
+    this.textContent = isMicOn ? '🎤 Mic Off' : '🎤 Mic On';
+    this.classList.toggle('active', isMicOn);
+
+    await rebuildOutgoingStream();
+  } catch (err) {
+    alert('Could not access microphone.');
   }
-
-  isMicOn = !isMicOn;
-  localStream.getAudioTracks().forEach(track => {
-    track.enabled = isMicOn;
-  });
-
-  this.textContent = isMicOn ? '🎤 Mic Off' : '🎤 Mic On';
-  this.classList.toggle('active', isMicOn);
 });
 
 // SHARE SCREEN
@@ -392,10 +418,7 @@ document.getElementById('shareScreenBtn').addEventListener('click', async functi
   }
 
   try {
-    const stream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
-      audio: true
-    });
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 
     screenStream = stream;
     isScreenSharing = true;
@@ -403,7 +426,7 @@ document.getElementById('shareScreenBtn').addEventListener('click', async functi
     this.classList.add('hidden');
     document.getElementById('stopShareBtn').classList.remove('hidden');
 
-    await startStreamToStudents(stream);
+    await rebuildOutgoingStream();
 
     stream.getVideoTracks()[0].addEventListener('ended', stopScreenShare);
   } catch (err) {
@@ -412,26 +435,19 @@ document.getElementById('shareScreenBtn').addEventListener('click', async functi
 });
 
 // STOP SCREEN SHARE
-document.getElementById('stopShareBtn').addEventListener('click', stopScreenShare);
-
-function stopScreenShare() {
+async function stopScreenShare() {
   if (screenStream) {
     screenStream.getTracks().forEach(t => t.stop());
     screenStream = null;
   }
-  localStream = null;
   localVideo.srcObject = null;
   noVideoMsg.style.display = 'flex';
   isScreenSharing = false;
 
-  for (let socketId in peerConnections) {
-    peerConnections[socketId].close();
-  }
-  peerConnections = {};
-
   document.getElementById('shareScreenBtn').classList.remove('hidden');
   document.getElementById('stopShareBtn').classList.add('hidden');
-  socket.emit('lecturer-media-stopped', { sessionId });
+
+  await rebuildOutgoingStream();
 }
 
 // STUDENT JOINS
