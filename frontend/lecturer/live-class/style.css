@@ -397,3 +397,60 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 12px 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .box {
+    padding: 20px;
+  }
+
+  .media-btns {
+    flex-direction: column;
+  }
+
+  .live-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .video-container {
+    height: 220px;
+  }
+
+  .students-panel {
+    order: 2;
+  }
+
+  .video-area {
+    order: 1;
+  }
+
+  .controls {
+    justify-content: center;
+  }
+
+  .end-btn {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .student-camera-item {
+    width: 80px;
+    height: 55px;
+  }
+}

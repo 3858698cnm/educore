@@ -327,3 +327,44 @@ button:hover { background: #1d4ed8; }
   background: black;
   border: 2px solid #2563eb;
 }
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 12px 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .class-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .video-container {
+    height: 220px;
+  }
+
+  .info-panel {
+    order: 2;
+  }
+
+  .video-area {
+    order: 1;
+  }
+
+  .corner-notification {
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    bottom: 10px;
+  }
+
+  .student-local-video {
+    width: 90px;
+    height: 60px;
+  }
+}
