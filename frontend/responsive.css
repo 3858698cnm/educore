@@ -1,0 +1,54 @@
+/* MOBILE RESPONSIVE - shared across all dashboard-style pages */
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 15px;
+    align-items: center;
+  }
+
+  .sidebar h2 {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .sidebar nav a {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .sidebar button {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  body {
+    flex-direction: column;
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 15px;
+    width: 100%;
+  }
+
+  .cards {
+    flex-direction: column;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
