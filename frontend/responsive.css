@@ -1,45 +1,29 @@
 /* MOBILE RESPONSIVE - shared across all dashboard-style pages */
 @media (max-width: 768px) {
   .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 15px;
-    align-items: center;
+    width: 160px;
+    padding: 12px 8px;
   }
 
   .sidebar h2 {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .sidebar nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-    flex: 1;
+    font-size: 16px;
+    margin-bottom: 15px;
   }
 
   .sidebar nav a {
-    font-size: 12px;
-    padding: 6px 10px;
+    font-size: 11px;
+    padding: 8px 6px;
   }
 
   .sidebar button {
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  body {
-    flex-direction: column;
+    font-size: 11px;
+    padding: 8px 6px;
   }
 
   .main {
-    margin-left: 0;
-    padding: 15px;
-    width: 100%;
+    margin-left: 160px;
+    padding: 12px;
+    width: calc(100% - 160px);
   }
 
   .cards {

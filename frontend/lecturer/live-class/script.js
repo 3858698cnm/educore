@@ -334,8 +334,13 @@ document.getElementById('toggleCameraBtn').addEventListener('click', async funct
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: isMicOn
+        audio: true
       });
+
+      stream.getAudioTracks().forEach(track => {
+        track.enabled = isMicOn;
+      });
+
       localStream = stream;
       isCameraOn = true;
       this.textContent = '📹 Camera Off';
@@ -364,31 +369,19 @@ document.getElementById('toggleCameraBtn').addEventListener('click', async funct
 });
 
 // TOGGLE MICROPHONE
-document.getElementById('toggleMicBtn').addEventListener('click', async function() {
-  if (!isMicOn) {
-    try {
-      if (localStream) {
-        const micStream = await navigator.mediaDevices.getUserMedia({
-          video: false, audio: true
-        });
-        micStream.getAudioTracks().forEach(track => {
-          localStream.addTrack(track);
-        });
-      }
-      isMicOn = true;
-      this.textContent = '🎤 Mic Off';
-      this.classList.add('active');
-    } catch (err) {
-      alert('Could not access microphone.');
-    }
-  } else {
-    if (localStream) {
-      localStream.getAudioTracks().forEach(t => t.stop());
-    }
-    isMicOn = false;
-    this.textContent = '🎤 Mic On';
-    this.classList.remove('active');
+document.getElementById('toggleMicBtn').addEventListener('click', function() {
+  if (!localStream) {
+    alert('Turn on the camera first to enable audio');
+    return;
   }
+
+  isMicOn = !isMicOn;
+  localStream.getAudioTracks().forEach(track => {
+    track.enabled = isMicOn;
+  });
+
+  this.textContent = isMicOn ? '🎤 Mic Off' : '🎤 Mic On';
+  this.classList.toggle('active', isMicOn);
 });
 
 // SHARE SCREEN

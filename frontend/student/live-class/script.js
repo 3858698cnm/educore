@@ -154,7 +154,11 @@ document.getElementById('studentCameraBtn').addEventListener('click', async func
     try {
       studentStream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: isStudentMicOn
+        audio: true
+      });
+
+      studentStream.getAudioTracks().forEach(track => {
+        track.enabled = isStudentMicOn;
       });
 
       studentLocalVideo.srcObject = studentStream;
@@ -163,14 +167,12 @@ document.getElementById('studentCameraBtn').addEventListener('click', async func
       this.textContent = '📹 Camera Off';
       this.classList.add('active');
 
-      // Notify lecturer student camera is on
       socket.emit('student-camera-started', {
         sessionId: currentSessionId,
         studentId,
         studentName
       });
 
-      // Create peer connection to send stream to lecturer
       await createStudentPeerConnection();
 
     } catch (err) {
@@ -182,35 +184,19 @@ document.getElementById('studentCameraBtn').addEventListener('click', async func
 });
 
 // Toggle student mic
-document.getElementById('studentMicBtn').addEventListener('click', async function() {
-  if (!isStudentMicOn) {
-    try {
-      if (studentStream) {
-        const micStream = await navigator.mediaDevices.getUserMedia({
-          video: false, audio: true
-        });
-        micStream.getAudioTracks().forEach(track => {
-          studentStream.addTrack(track);
-        });
-      } else {
-        studentStream = await navigator.mediaDevices.getUserMedia({
-          video: false, audio: true
-        });
-      }
-      isStudentMicOn = true;
-      this.textContent = '🎤 Mic Off';
-      this.classList.add('active');
-    } catch (err) {
-      alert('Could not access microphone.');
-    }
-  } else {
-    if (studentStream) {
-      studentStream.getAudioTracks().forEach(t => t.stop());
-    }
-    isStudentMicOn = false;
-    this.textContent = '🎤 Turn On Mic';
-    this.classList.remove('active');
+document.getElementById('studentMicBtn').addEventListener('click', function() {
+  if (!studentStream) {
+    alert('Turn on your camera first to enable audio');
+    return;
   }
+
+  isStudentMicOn = !isStudentMicOn;
+  studentStream.getAudioTracks().forEach(track => {
+    track.enabled = isStudentMicOn;
+  });
+
+  this.textContent = isStudentMicOn ? '🎤 Mic Off' : '🎤 Turn On Mic';
+  this.classList.toggle('active', isStudentMicOn);
 });
 
 // Create peer connection to send student camera to lecturer
