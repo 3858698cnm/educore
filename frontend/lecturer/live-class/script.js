@@ -126,7 +126,7 @@ pc.ontrack = (event) => {
 });
 
 // RECEIVE ICE CANDIDATES FROM STUDENT CAMERA
-socket.on('lecturer-student-ice-candidate', async (data) => {
+socket.on('student-webrtc-ice-candidate', async (data) => {
   const { studentId, candidate } = data;
   const pc = studentPeerConnections[studentId];
   if (pc && candidate) {
