@@ -78,10 +78,14 @@ async function loadStudentsForUnit(unitId) {
     }
 
     data.students.forEach(student => {
-      const attendance = data.attendance.find(a => a.studentId === student._id.toString());
+      const studentAttendanceRecords = data.attendance.filter(a => a.studentId === student._id.toString());
       const grade = data.grades.find(g => g.studentId === student._id.toString());
 
-      const attendancePercent = attendance ? attendance.attendancePercent : 0;
+      let attendancePercent = 0;
+      if (studentAttendanceRecords.length > 0) {
+        const total = studentAttendanceRecords.reduce((sum, a) => sum + a.attendancePercent, 0);
+        attendancePercent = Math.round(total / studentAttendanceRecords.length);
+      }
       const attendanceScore = parseFloat(((attendancePercent / 100) * 10).toFixed(1));
       const examScore = grade ? grade.examScore : 0;
       const finalScore = parseFloat((examScore + attendanceScore).toFixed(1));
