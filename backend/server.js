@@ -1455,37 +1455,6 @@ activeSessions[sessionId] = {
       }
     }
   });
-  // LECTURER SENDS ANSWER TO STUDENT CAMERA
-  socket.on('lecturer-student-answer', (data) => {
-    const { sessionId, studentId, answer } = data;
-    if (activeSessions[sessionId]) {
-      const student = activeSessions[sessionId].students[studentId];
-      if (student) {
-        io.to(student.socketId).emit('student-webrtc-answer', { answer });
-      }
-    }
-  });
-
-  // ICE CANDIDATES FOR STUDENT CAMERA
-  socket.on('student-webrtc-ice-candidate', (data) => {
-    const { sessionId, studentId, candidate } = data;
-    if (activeSessions[sessionId]) {
-      io.to(activeSessions[sessionId].lecturerSocketId).emit('student-webrtc-ice-candidate', {
-        studentId,
-        candidate
-      });
-    }
-  });
-
-  socket.on('lecturer-student-ice-candidate', (data) => {
-    const { sessionId, studentId, candidate } = data;
-    if (activeSessions[sessionId]) {
-      const student = activeSessions[sessionId].students[studentId];
-      if (student) {
-        io.to(student.socketId).emit('student-webrtc-ice-candidate', { candidate });
-      }
-    }
-  });
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);

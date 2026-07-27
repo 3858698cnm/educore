@@ -398,6 +398,7 @@ document.getElementById('toggleCameraBtn').addEventListener('click', async funct
 // TOGGLE MICROPHONE
 document.getElementById('toggleMicBtn').addEventListener('click', async function() {
   try {
+    const hadMicBefore = !!micTrack;
     await ensureMicTrack();
     isMicOn = !isMicOn;
     micTrack.enabled = isMicOn;
@@ -405,7 +406,9 @@ document.getElementById('toggleMicBtn').addEventListener('click', async function
     this.textContent = isMicOn ? '🎤 Mic Off' : '🎤 Mic On';
     this.classList.toggle('active', isMicOn);
 
-    await rebuildOutgoingStream();
+    if (!hadMicBefore) {
+      await rebuildOutgoingStream();
+    }
   } catch (err) {
     alert('Could not access microphone.');
   }
