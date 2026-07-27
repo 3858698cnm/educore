@@ -384,6 +384,7 @@ document.getElementById('toggleCameraBtn').addEventListener('click', async funct
     isCameraOn = false;
     this.textContent = '📹 Camera On';
     this.classList.remove('active');
+    socket.emit('lecturer-video-stopped', { sessionId });
     await rebuildOutgoingStream();
   }
 });

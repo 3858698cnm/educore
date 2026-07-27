@@ -1355,6 +1355,10 @@ activeSessions[sessionId] = {
     const { sessionId } = data;
     socket.to(sessionId).emit('lecturer-media-stopped');
   });
+  socket.on('lecturer-video-stopped', (data) => {
+    const { sessionId } = data;
+    socket.to(sessionId).emit('lecturer-video-stopped');
+  });
 
   // WEBRTC SIGNALING
   socket.on('webrtc-offer', (data) => {

@@ -88,12 +88,17 @@ socket.on('lecturer-media-started', function(data) {
     studentSocketId: socket.id
   });
 });
-
 socket.on('lecturer-media-stopped', function() {
   if (remoteVideo.srcObject) remoteVideo.srcObject = null;
   document.getElementById('noStreamMsg').style.display = 'flex';
   if (peerConnection) { peerConnection.close(); peerConnection = null; }
 });
+
+socket.on('lecturer-video-stopped', function() {
+  if (remoteVideo.srcObject) remoteVideo.srcObject = null;
+  document.getElementById('noStreamMsg').style.display = 'flex';
+});
+
 
 socket.on('webrtc-offer', async (data) => {
   console.log('Received offer from lecturer');
