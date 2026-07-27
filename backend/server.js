@@ -28,6 +28,16 @@ async function sendEmail(to, subject, html) {
   }
 }
 const path = require('path');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const app = express();
 const server = http.createServer(app);
@@ -961,10 +971,26 @@ app.get('/api/materials/unit/:unitId', authMiddleware, async (req, res) => {
   }
 });
 
-// Upload a material
-app.post('/api/materials', authMiddleware, async (req, res) => {
+// Upload a material (with file)
+app.post('/api/materials', authMiddleware, upload.single('file'), async (req, res) => {
   try {
-    const { unitId, title, link } = req.body;
+    const { unitId, title } = req.body;
+    let link = req.body.link || '';
+
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { resource_type: 'raw', folder: 'educore-materials' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      link = uploadResult.secure_url;
+    }
+
     const newMaterial = new Material({
       title,
       link,

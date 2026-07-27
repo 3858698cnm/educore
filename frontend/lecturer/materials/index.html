@@ -36,8 +36,12 @@
         <input type="text" id="materialTitle" placeholder="Material Title (e.g. Week 1 Notes)">
       </div>
       <div class="form-row">
-        <input type="text" id="materialLink" placeholder="Link or URL (e.g. https://drive.google.com/...)">
+        <input type="file" id="materialFile">
         <button id="uploadBtn">Upload Material</button>
+      </div>
+      <p style="font-size:13px;color:#666;">Or paste a link instead of uploading a file:</p>
+      <div class="form-row">
+        <input type="text" id="materialLink" placeholder="Link or URL (optional if uploading a file)">
       </div>
       <p class="message" id="message"></p>
     </div>

@@ -63,8 +63,8 @@ function renderMaterials(materials) {
         <div class="date">📅 Uploaded: ${date}</div>
       </div>
       <div>
-        ${mat.link
-          ? `<a href="${mat.link}" target="_blank" class="view-btn">📄 View</a>`
+       ${mat.link
+          ? `<a href="${mat.link}" target="_blank" download class="view-btn">📄 Download</a>`
           : '<span class="no-link">No link provided</span>'
         }
       </div>
