@@ -307,7 +307,7 @@ socket.on('student-ready-for-stream', async (data) => {
 socket.on('webrtc-answer', async (data) => {
   const { answer, fromSocketId } = data;
   const pc = peerConnections[fromSocketId];
-  if (pc) {
+  if (pc && pc.signalingState === 'have-local-offer') {
     await pc.setRemoteDescription(new RTCSessionDescription(answer));
   }
 });
