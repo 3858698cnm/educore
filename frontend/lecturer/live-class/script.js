@@ -278,16 +278,8 @@ async function startStreamToStudents(stream) {
   }
   peerConnections = {};
 
-  // Notify students stream started
+  // Just notify students - they will each ask to connect via 'student-ready-for-stream'
   socket.emit('lecturer-media-started', { sessionId, type: 'stream' });
-
-  // Create peer connection for each connected student
-  for (let studentId in students) {
-    const studentSocketId = students[studentId].socketId;
-    if (studentSocketId) {
-      await createPeerConnection(studentSocketId, stream);
-    }
-  }
 }
 
 // STUDENT IS READY FOR STREAM
