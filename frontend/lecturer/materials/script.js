@@ -84,6 +84,8 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
   const unitId = document.getElementById('unitSelect').value;
   const title = document.getElementById('materialTitle').value.trim();
   const link = document.getElementById('materialLink').value.trim();
+  const fileInput = document.getElementById('materialFile');
+  const file = fileInput ? fileInput.files[0] : null;
   const messageEl = document.getElementById('message');
 
   if (!unitId || !title) {
@@ -92,14 +94,25 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
     return;
   }
 
+  if (!file && !link) {
+    messageEl.style.color = '#e11d48';
+    messageEl.textContent = 'Please upload a file or enter a link';
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('unitId', unitId);
+  formData.append('title', title);
+  formData.append('link', link);
+  if (file) formData.append('file', file);
+
   try {
     const res = await fetch('/api/materials', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({ unitId, title, link })
+      body: formData
     });
 
     const data = await res.json();
@@ -109,6 +122,7 @@ document.getElementById('uploadBtn').addEventListener('click', async function() 
       messageEl.textContent = 'Material uploaded successfully';
       document.getElementById('materialTitle').value = '';
       document.getElementById('materialLink').value = '';
+      if (fileInput) fileInput.value = '';
       document.getElementById('unitSelect').value = '';
       await loadMaterials();
     } else {
