@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduCore - CAT</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/responsive.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/student/dashboard">Dashboard</a>
+      <a href="/student/live-class">Live Class</a>
+      <a href="/student/grades">Grades</a>
+      <a href="/student/materials">Materials</a>
+      <a href="/student/cat" class="active">CAT</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>CAT (Continuous Assessment Test)</h1>
+      <p>Available tests for your enrolled units</p>
+    </header>
+
+    <!-- LIST OF AVAILABLE CATS -->
+    <div id="catListSection">
+      <div id="catsList" class="materials-list">
+        <p class="empty-text">Loading CATs...</p>
+      </div>
+    </div>
+
+    <!-- TAKING A CAT -->
+    <div id="takeCatBox" class="add-box hidden">
+      <div class="timer-row">
+        <h3 id="takeCatTitle">CAT Title</h3>
+        <div id="timerDisplay" class="timer-display">--:--</div>
+      </div>
+      <div id="questionsArea"></div>
+      <button id="submitCatBtn" type="button">Submit CAT</button>
+    </div>
+
+    <!-- RESULT BOX -->
+    <div id="resultBox" class="add-box hidden">
+      <h3>✅ CAT Submitted</h3>
+      <p id="resultText"></p>
+    </div>
+
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>

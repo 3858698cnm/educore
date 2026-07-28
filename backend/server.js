@@ -137,6 +137,19 @@ const materialSchema = new mongoose.Schema({
 });
 const Material = mongoose.model('Material', materialSchema);
 
+const catSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  unitId: { type: String, required: true },
+  lecturerId: { type: String, required: true },
+  timeLimitMinutes: { type: Number, required: true },
+  questions: [{
+    questionText: { type: String, required: true },
+    options: [{ type: String, required: true }],
+    correctAnswerIndex: { type: Number, required: true }
+  }],
+  createdAt: { type: Date, default: Date.now }
+});
+const Cat = mongoose.model('Cat', catSchema);
 const gradeSchema = new mongoose.Schema({
   studentId: { type: String, required: true },
   unitId: { type: String, required: true },
@@ -145,6 +158,16 @@ const gradeSchema = new mongoose.Schema({
   finalScore: { type: Number, default: 0 },
   letterGrade: { type: String, default: '' }
 });
+const catResultSchema = new mongoose.Schema({
+  catId: { type: String, required: true },
+  studentId: { type: String, required: true },
+  unitId: { type: String },
+  correctCount: { type: Number, required: true },
+  totalQuestions: { type: Number, required: true },
+  scoreOutOf30: { type: Number, required: true },
+  submittedAt: { type: Date, default: Date.now }
+});
+const CatResult = mongoose.model('CatResult', catResultSchema);
 const Grade = mongoose.model('Grade', gradeSchema);
 
 function authMiddleware(req, res, next) {
@@ -943,6 +966,144 @@ app.post('/api/grades', authMiddleware, async (req, res) => {
     }
 
     res.json({ message: 'Grade saved successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+/* =====================
+   CAT ROUTES
+===================== */
+
+// Create a new CAT
+app.post('/api/cats', authMiddleware, async (req, res) => {
+  try {
+    const { title, unitId, timeLimitMinutes, questions } = req.body;
+
+    if (!title || !unitId || !timeLimitMinutes || !questions || questions.length === 0) {
+      return res.status(400).json({ message: 'Please fill in all fields and add at least one question' });
+    }
+
+    const newCat = new Cat({
+      title,
+      unitId,
+      lecturerId: req.user.id,
+      timeLimitMinutes,
+      questions
+    });
+    await newCat.save();
+    res.status(201).json(newCat);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Get all CATs created by this lecturer
+app.get('/api/my-cats', authMiddleware, async (req, res) => {
+  try {
+    const cats = await Cat.find({ lecturerId: req.user.id });
+    res.json(cats);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Delete a CAT
+app.delete('/api/cats/:id', authMiddleware, async (req, res) => {
+  try {
+    await Cat.findByIdAndDelete(req.params.id);
+    res.json({ message: 'CAT deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+// Get available CATs for student (based on their course's units)
+app.get('/api/my-course-cats', authMiddleware, async (req, res) => {
+  try {
+    const student = await User.findById(req.user.id);
+    if (!student.courseId) {
+      return res.json({ cats: [], units: [] });
+    }
+
+    const units = await Unit.find({ courseId: student.courseId });
+    const unitIds = units.map(u => u._id.toString());
+
+    const cats = await Cat.find({ unitId: { $in: unitIds } }).sort({ createdAt: -1 });
+
+    // Remove correct answers before sending to student
+    const safeCats = cats.map(cat => ({
+      _id: cat._id,
+      title: cat.title,
+      unitId: cat.unitId,
+      timeLimitMinutes: cat.timeLimitMinutes,
+      totalQuestions: cat.questions.length
+    }));
+
+    res.json({ cats: safeCats, units });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Get one CAT's full questions to take it (still hides correct answers)
+app.get('/api/cats/:id/take', authMiddleware, async (req, res) => {
+  try {
+    const cat = await Cat.findById(req.params.id);
+    if (!cat) return res.status(404).json({ message: 'CAT not found' });
+
+    const alreadyDone = await CatResult.findOne({ catId: req.params.id, studentId: req.user.id });
+    if (alreadyDone) {
+      return res.status(400).json({ message: 'You have already attempted this CAT' });
+    }
+
+    const questionsForStudent = cat.questions.map(q => ({
+      questionText: q.questionText,
+      options: q.options
+    }));
+
+    res.json({
+      _id: cat._id,
+      title: cat.title,
+      timeLimitMinutes: cat.timeLimitMinutes,
+      questions: questionsForStudent
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Submit CAT answers and get auto-graded
+app.post('/api/cats/:id/submit', authMiddleware, async (req, res) => {
+  try {
+    const { answers, unitId } = req.body;
+
+    const alreadyDone = await CatResult.findOne({ catId: req.params.id, studentId: req.user.id });
+    if (alreadyDone) {
+      return res.status(400).json({ message: 'You have already attempted this CAT' });
+    }
+
+    const cat = await Cat.findById(req.params.id);
+    if (!cat) return res.status(404).json({ message: 'CAT not found' });
+
+    let correctCount = 0;
+    cat.questions.forEach((q, index) => {
+      if (answers[index] === q.correctAnswerIndex) {
+        correctCount++;
+      }
+    });
+
+    const scoreOutOf30 = Math.round((correctCount / cat.questions.length) * 30);
+
+    const result = new CatResult({
+      catId: cat._id,
+      studentId: req.user.id,
+      unitId: unitId || cat.unitId,
+      correctCount,
+      totalQuestions: cat.questions.length,
+      scoreOutOf30
+    });
+    await result.save();
+
+    res.json({ correctCount, totalQuestions: cat.questions.length, scoreOutOf30 });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

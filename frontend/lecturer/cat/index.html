@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduCore - CAT</title>
+<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/responsive.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>EduCore</h2>
+    <nav>
+      <a href="/lecturer/dashboard">Dashboard</a>
+      <a href="/lecturer/live-class">Live Class</a>
+      <a href="/lecturer/grades">Grades</a>
+      <a href="/lecturer/materials">Materials</a>
+      <a href="/lecturer/cat" class="active">CAT</a>
+    </nav>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>CAT (Continuous Assessment Test)</h1>
+      <p>Create multiple choice tests for your students (out of 30 marks)</p>
+    </header>
+
+    <div class="add-box">
+      <h3>Create New CAT</h3>
+
+      <div class="form-row">
+        <select id="unitSelect">
+          <option value="">Select Unit</option>
+        </select>
+        <input type="text" id="catTitle" placeholder="CAT Title (e.g. CAT 1)">
+      </div>
+
+      <div class="form-row">
+        <input type="number" id="timeLimit" placeholder="Time limit in minutes (e.g. 20)" min="1">
+      </div>
+
+      <div id="questionsContainer"></div>
+
+      <button id="addQuestionBtn" type="button">+ Add Question</button>
+      <button id="saveCatBtn" type="button">Save CAT</button>
+      <p class="message" id="message"></p>
+    </div>
+
+    <div id="catsSection">
+      <h2>All CATs Created</h2>
+      <div id="catsList" class="materials-list">
+        <p class="empty-text">No CATs created yet.</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>
