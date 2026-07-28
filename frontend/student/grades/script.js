@@ -22,7 +22,7 @@ async function loadGrades() {
     if (!data.results || data.results.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="7" style="text-align:center;color:#999;">
+          <td colspan="8" style="text-align:center;color:#999;">
             No grades available yet. Your lecturer will enter them soon.
           </td>
         </tr>`;
@@ -38,6 +38,7 @@ async function loadGrades() {
       const hasGrade = item.grade !== null;
       const attendancePercent = item.attendance ? item.attendance.attendancePercent : 0;
       const attendanceScore = parseFloat(((attendancePercent / 100) * 10).toFixed(1));
+      const catScore = item.catScore || 0;
       const examScore = hasGrade ? item.grade.examScore : '-';
       const finalScore = hasGrade ? item.grade.finalScore : '-';
       const letterGrade = hasGrade ? item.grade.letterGrade : null;
@@ -57,7 +58,8 @@ async function loadGrades() {
         <td>${item.unit.code}</td>
         <td>${attendancePercent}%</td>
         <td>${attendanceScore}/10</td>
-        <td>${hasGrade ? examScore + '/90' : '<span class="not-graded">Not graded</span>'}</td>
+        <td>${catScore}/30</td>
+        <td>${hasGrade ? examScore + '/60' : '<span class="not-graded">Not graded</span>'}</td>
         <td>${hasGrade ? finalScore + '/100' : '<span class="not-graded">-</span>'}</td>
         <td>${hasGrade
           ? `<span class="grade-badge grade-${letterGrade}">${letterGrade}</span>`

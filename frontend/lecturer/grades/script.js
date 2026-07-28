@@ -80,6 +80,7 @@ async function loadStudentsForUnit(unitId) {
     data.students.forEach(student => {
       const studentAttendanceRecords = data.attendance.filter(a => a.studentId === student._id.toString());
       const grade = data.grades.find(g => g.studentId === student._id.toString());
+      const studentCatResults = data.catResults ? data.catResults.filter(c => c.studentId === student._id.toString()) : [];
 
       let attendancePercent = 0;
       if (studentAttendanceRecords.length > 0) {
@@ -87,8 +88,15 @@ async function loadStudentsForUnit(unitId) {
         attendancePercent = Math.round(total / studentAttendanceRecords.length);
       }
       const attendanceScore = parseFloat(((attendancePercent / 100) * 10).toFixed(1));
+
+      let catScore = 0;
+      if (studentCatResults.length > 0) {
+        const totalCat = studentCatResults.reduce((sum, c) => sum + c.scoreOutOf30, 0);
+        catScore = parseFloat((totalCat / studentCatResults.length).toFixed(1));
+      }
+
       const examScore = grade ? grade.examScore : 0;
-      const finalScore = parseFloat((examScore + attendanceScore).toFixed(1));
+      const finalScore = parseFloat((examScore + attendanceScore + catScore).toFixed(1));
       const letterGrade = calculateGrade(finalScore);
 
       const row = document.createElement('tr');
@@ -96,15 +104,16 @@ async function loadStudentsForUnit(unitId) {
         <td>${student.name}</td>
         <td>${attendancePercent}%</td>
         <td>${attendanceScore}/10</td>
+        <td>${catScore}/30</td>
         <td>
           <input
             type="number"
             class="exam-input"
             id="exam-${student._id}"
             min="0"
-            max="90"
+            max="60"
             value="${examScore}"
-            placeholder="0-90"
+            placeholder="0-60"
           >
         </td>
         <td id="final-${student._id}">${finalScore}/100</td>
@@ -112,7 +121,7 @@ async function loadStudentsForUnit(unitId) {
           <span class="grade-badge grade-${letterGrade}">${letterGrade}</span>
         </td>
         <td>
-          <button class="save-btn" onclick="saveGrade('${student._id}', '${unitId}', ${attendanceScore})">
+          <button class="save-btn" onclick="saveGrade('${student._id}', '${unitId}', ${attendanceScore}, ${catScore})">
             Save
           </button>
           <div class="saved-text" id="saved-${student._id}"></div>
@@ -123,9 +132,9 @@ async function loadStudentsForUnit(unitId) {
       // Live update final score as exam score is typed
       document.getElementById('exam-' + student._id).addEventListener('input', function() {
         let val = parseFloat(this.value) || 0;
-        if (val > 90) { val = 90; this.value = 90; }
+        if (val > 60) { val = 60; this.value = 60; }
         if (val < 0) { val = 0; this.value = 0; }
-        const newFinal = parseFloat((val + attendanceScore).toFixed(1));
+        const newFinal = parseFloat((val + attendanceScore + catScore).toFixed(1));
         const newGrade = calculateGrade(newFinal);
         document.getElementById('final-' + student._id).textContent = newFinal + '/100';
         document.getElementById('grade-' + student._id).innerHTML =
@@ -148,13 +157,13 @@ function calculateGrade(score) {
 }
 
 // Save grade for a student
-async function saveGrade(studentId, unitId, attendanceScore) {
+async function saveGrade(studentId, unitId, attendanceScore, catScore) {
   const examScoreInput = document.getElementById('exam-' + studentId);
   let examScore = parseFloat(examScoreInput.value) || 0;
-  if (examScore > 90) examScore = 90;
+  if (examScore > 60) examScore = 60;
   if (examScore < 0) examScore = 0;
 
-  const finalScore = parseFloat((examScore + attendanceScore).toFixed(1));
+  const finalScore = parseFloat((examScore + attendanceScore + catScore).toFixed(1));
   const letterGrade = calculateGrade(finalScore);
 
   try {
@@ -164,7 +173,7 @@ async function saveGrade(studentId, unitId, attendanceScore) {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({ studentId, unitId, examScore, attendanceScore, finalScore, letterGrade })
+      body: JSON.stringify({ studentId, unitId, examScore, attendanceScore, catScore, finalScore, letterGrade })
     });
 
     if (res.ok) {

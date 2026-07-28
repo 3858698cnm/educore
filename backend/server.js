@@ -155,6 +155,7 @@ const gradeSchema = new mongoose.Schema({
   unitId: { type: String, required: true },
   examScore: { type: Number, default: 0 },
   attendanceScore: { type: Number, default: 0 },
+  catScore: { type: Number, default: 0 },
   finalScore: { type: Number, default: 0 },
   letterGrade: { type: String, default: '' }
 });
@@ -932,7 +933,10 @@ app.get('/api/unit-students/:unitId', authMiddleware, async (req, res) => {
     // Get existing grades for this unit
     const grades = await Grade.find({ unitId: req.params.unitId });
 
-    res.json({ students, attendance, grades });
+    // Get CAT results for this unit
+    const catResults = await CatResult.find({ unitId: req.params.unitId });
+
+    res.json({ students, attendance, grades, catResults });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -941,7 +945,7 @@ app.get('/api/unit-students/:unitId', authMiddleware, async (req, res) => {
 // Save or update a grade
 app.post('/api/grades', authMiddleware, async (req, res) => {
   try {
-    const { studentId, unitId, examScore, attendanceScore, finalScore, letterGrade } = req.body;
+    const { studentId, unitId, examScore, attendanceScore, catScore, finalScore, letterGrade } = req.body;
 
     // Check if grade already exists
     const existing = await Grade.findOne({ studentId, unitId });
@@ -950,6 +954,7 @@ app.post('/api/grades', authMiddleware, async (req, res) => {
       await Grade.findByIdAndUpdate(existing._id, {
         examScore,
         attendanceScore,
+        catScore,
         finalScore,
         letterGrade
       });
@@ -959,6 +964,7 @@ app.post('/api/grades', authMiddleware, async (req, res) => {
         unitId,
         examScore,
         attendanceScore,
+        catScore,
         finalScore,
         letterGrade
       });
@@ -1188,7 +1194,7 @@ app.get('/api/my-grades-full', authMiddleware, async (req, res) => {
     // Get all units for student's course
     const units = await Unit.find({ courseId: student.courseId });
 
-    // For each unit get grade and attendance
+    // For each unit get grade, attendance, and CAT results
     const results = await Promise.all(units.map(async (unit) => {
       const grade = await Grade.findOne({
         studentId: req.user.id,
@@ -1200,7 +1206,18 @@ app.get('/api/my-grades-full', authMiddleware, async (req, res) => {
         unitId: unit._id
       });
 
-      return { unit, grade, attendance };
+      const catResults = await CatResult.find({
+        studentId: req.user.id,
+        unitId: unit._id
+      });
+
+      let catScore = 0;
+      if (catResults.length > 0) {
+        const total = catResults.reduce((sum, c) => sum + c.scoreOutOf30, 0);
+        catScore = parseFloat((total / catResults.length).toFixed(1));
+      }
+
+      return { unit, grade, attendance, catScore };
     }));
 
     res.json({ results });
