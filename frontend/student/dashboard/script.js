@@ -6,7 +6,9 @@ const userId = localStorage.getItem('userId');
 if (!token || role !== 'student') {
   window.location.href = '/login';
 }
-
+document.getElementById('menuToggleBtn').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
 document.getElementById('studentName').textContent = name;
 
 document.getElementById('logoutBtn').addEventListener('click', function() {

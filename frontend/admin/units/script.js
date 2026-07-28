@@ -4,7 +4,9 @@ const role = localStorage.getItem('role');
 if (!token || role !== 'admin') {
   window.location.href = '/login';
 }
-
+document.getElementById('menuToggleBtn').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
 document.getElementById('logoutBtn').addEventListener('click', function() {
   localStorage.clear();
   window.location.href = '/login';

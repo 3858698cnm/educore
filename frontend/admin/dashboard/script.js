@@ -7,7 +7,9 @@ if (!token || role !== 'admin') {
 }
 
 document.getElementById('adminName').textContent = name;
-
+document.getElementById('menuToggleBtn').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
 document.getElementById('logoutBtn').addEventListener('click', function() {
   localStorage.clear();
   window.location.href = '/login';
