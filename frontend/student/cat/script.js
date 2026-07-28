@@ -77,6 +77,8 @@ async function startCat(catId) {
 
     currentCat = data;
 
+    document.body.classList.add('fullscreen-mode');
+
     document.getElementById('catListSection').classList.add('hidden');
     document.getElementById('takeCatBox').classList.remove('hidden');
     document.getElementById('takeCatTitle').textContent = data.title;
@@ -133,6 +135,7 @@ async function submitCat() {
   if (!currentCat) return;
 
   clearInterval(timerInterval);
+  document.body.classList.remove('fullscreen-mode');
 
   const answers = [];
   currentCat.questions.forEach((q, index) => {
