@@ -58,118 +58,17 @@ mongoose.connect(process.env.MONGO_URI)
   })
   .catch((err) => console.log('MongoDB error:', err));
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'lecturer', 'student'], default: 'student' },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
-  facultyId: { type: String },
-  departmentId: { type: String },
-  courseId: { type: String },
-  profileComplete: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
- resetCode: { type: String },
-  resetCodeExpires: { type: Date },
-   admissionNumber: { type: String, unique: true, sparse: true }
-});
-const User = mongoose.model('User', userSchema);
-
-const facultySchema = new mongoose.Schema({
-  name: { type: String, required: true }
-});
-const Faculty = mongoose.model('Faculty', facultySchema);
-
-const departmentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  facultyId: { type: String, required: true }
-});
-const Department = mongoose.model('Department', departmentSchema);
-
-const courseSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  code: { type: String, required: true, unique: true },
-  departmentId: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
-const Course = mongoose.model('Course', courseSchema);
-
-const unitSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  code: { type: String, required: true, unique: true },
-  courseId: { type: String, required: true },
-  lecturerId: { type: String },
-  attendanceWeight: { type: Number, default: 10 },
-  createdAt: { type: Date, default: Date.now }
-});
-const Unit = mongoose.model('Unit', unitSchema);
-
-const sessionSchema = new mongoose.Schema({
-  className: { type: String, required: true },
-  unitId: { type: String },
-  lecturerId: { type: String, required: true },
-  startTime: { type: Date, default: Date.now },
-  endTime: { type: Date },
-  status: { type: String, default: 'active' },
-  totalChecks: { type: Number, default: 0 }
-});
-const Session = mongoose.model('Session', sessionSchema);
-
-const attendanceSchema = new mongoose.Schema({
-  studentId: { type: String, required: true },
-  studentName: { type: String, required: true },
-  sessionId: { type: String, required: true },
-  unitId: { type: String },
-  responses: { type: Number, default: 0 },
-  checksSent: { type: Number, default: 0 },
-  finalStatus: { type: String, default: 'present' },
-  attendancePercent: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now }
-});
-const Attendance = mongoose.model('Attendance', attendanceSchema);
-
-const materialSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  link: { type: String },
-  unitId: { type: String },
-  uploadedBy: { type: String },
-  createdAt: { type: Date, default: Date.now }
-});
-const Material = mongoose.model('Material', materialSchema);
-
-const catSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  unitId: { type: String, required: true },
-  lecturerId: { type: String, required: true },
-  timeLimitMinutes: { type: Number, required: true },
-  questions: [{
-    questionText: { type: String, required: true },
-    options: [{ type: String, required: true }],
-    correctAnswerIndex: { type: Number, required: true }
-  }],
-  createdAt: { type: Date, default: Date.now }
-});
-const Cat = mongoose.model('Cat', catSchema);
-const gradeSchema = new mongoose.Schema({
-  studentId: { type: String, required: true },
-  unitId: { type: String, required: true },
-  examScore: { type: Number, default: 0 },
-  attendanceScore: { type: Number, default: 0 },
-  catScore: { type: Number, default: 0 },
-  finalScore: { type: Number, default: 0 },
-  letterGrade: { type: String, default: '' }
-});
-const catResultSchema = new mongoose.Schema({
-  catId: { type: String, required: true },
-  studentId: { type: String, required: true },
-  unitId: { type: String },
-  correctCount: { type: Number, required: true },
-  totalQuestions: { type: Number, required: true },
-  scoreOutOf30: { type: Number, required: true },
-  submittedAt: { type: Date, default: Date.now }
-});
-const CatResult = mongoose.model('CatResult', catResultSchema);
-const Grade = mongoose.model('Grade', gradeSchema);
+const User = require('./models/User');
+const Faculty = require('./models/Faculty');
+const Department = require('./models/Department');
+const Course = require('./models/Course');
+const Unit = require('./models/Unit');
+const Session = require('./models/Session');
+const Attendance = require('./models/Attendance');
+const Material = require('./models/Material');
+const Grade = require('./models/Grade');
+const Cat = require('./models/Cat');
+const CatResult = require('./models/CatResult');
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
