@@ -48,6 +48,7 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(require('./routes/faculties'));
 
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
@@ -325,51 +326,7 @@ app.get('/api/admin/stats', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-/* =====================
-   FACULTY ROUTES
-===================== */
 
-// GET all faculties
-app.get('/api/faculties', authMiddleware, async (req, res) => {
-  try {
-    const faculties = await Faculty.find();
-    res.json(faculties);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
-
-// PUBLIC faculties (no login needed - for profile completion page)
-app.get('/api/public/faculties', async (req, res) => {
-  try {
-    const faculties = await Faculty.find();
-    res.json(faculties);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
-
-// ADD a faculty
-app.post('/api/faculties', authMiddleware, async (req, res) => {
-  try {
-    const { name } = req.body;
-    const newFaculty = new Faculty({ name });
-    await newFaculty.save();
-    res.status(201).json(newFaculty);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
-
-// DELETE a faculty
-app.delete('/api/faculties/:id', authMiddleware, async (req, res) => {
-  try {
-    await Faculty.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Faculty deleted' });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
 /* =====================
    DEPARTMENT ROUTES
 ===================== */
