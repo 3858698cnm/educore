@@ -92,6 +92,10 @@ app.get('/api/active-sessions', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+// 404 handler - catches any route not matched above
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, '../frontend/404.html'));
+});
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log('EduCore server running on port ' + PORT);
