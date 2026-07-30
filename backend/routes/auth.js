@@ -8,9 +8,14 @@ const User = require('../models/User');
 const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 5,
-  message: { message: 'Too many login attempts. Please try again in 5 minutes.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: 'Too many login attempts.',
+      retryAfterSeconds: Math.ceil(req.rateLimit.resetTime ? (req.rateLimit.resetTime - Date.now()) / 1000 : 300)
+    });
+  }
 });
 const SibApiV3Sdk = require('sib-api-v3-sdk');
 

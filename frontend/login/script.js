@@ -53,6 +53,8 @@ setTimeout(() => {
         }
       }, 1000);
 
+    } else if (response.status === 429) {
+      startRateLimitCountdown(data.retryAfterSeconds || 300);
     } else {
       messageEl.style.color = '#e11d48';
       messageEl.textContent = data.message;
@@ -63,6 +65,41 @@ setTimeout(() => {
     messageEl.textContent = 'Something went wrong. Try again.';
   }
 });
+
+// Countdown for rate-limited login attempts
+let rateLimitInterval = null;
+function startRateLimitCountdown(seconds) {
+  const messageEl = document.getElementById('message');
+  const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+
+  let timeLeft = Math.ceil(seconds);
+  if (submitBtn) submitBtn.disabled = true;
+
+  if (rateLimitInterval) clearInterval(rateLimitInterval);
+
+  function updateDisplay() {
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    const display = mins + ':' + String(secs).padStart(2, '0');
+    messageEl.style.color = '#e11d48';
+    messageEl.textContent = 'Too many login attempts. Try again in ' + display;
+  }
+
+  updateDisplay();
+
+  rateLimitInterval = setInterval(function() {
+    timeLeft--;
+    if (timeLeft <= 0) {
+      clearInterval(rateLimitInterval);
+      messageEl.style.color = '#16a34a';
+      messageEl.textContent = 'You can try logging in again now.';
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
+    updateDisplay();
+  }, 1000);
+}
+
 // Toggle forgot password box
 document.getElementById('forgotLink').addEventListener('click', function(e) {
   e.preventDefault();
