@@ -137,6 +137,7 @@ document.getElementById('saveCatBtn').addEventListener('click', async function()
 
 // Load and display existing CATs
 async function loadCats() {
+  document.getElementById('catsList').innerHTML = '<p class="empty-text">Loading CATs...</p>';
   try {
     const res = await fetch('/api/my-cats', {
       headers: { 'Authorization': 'Bearer ' + token }

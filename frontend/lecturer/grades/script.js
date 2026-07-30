@@ -52,10 +52,12 @@ document.getElementById('unitSelect').addEventListener('change', async function(
   document.getElementById('selectedUnitName').textContent =
     unit ? unit.name + ' (' + unit.code + ')' : 'Unit';
 
-  await loadStudentsForUnit(unitId);
-
+  document.getElementById('gradesTableBody').innerHTML =
+    '<tr><td colspan="8" style="text-align:center;color:#999;">Loading students...</td></tr>';
   gradesSection.classList.remove('hidden');
   emptyText.style.display = 'none';
+
+  await loadStudentsForUnit(unitId);
 });
 
 // Load students enrolled in this unit's course + their attendance + existing grades

@@ -19,6 +19,7 @@ let timerInterval = null;
 let timeLeftSeconds = 0;
 
 async function loadCats() {
+  document.getElementById('catsList').innerHTML = '<p class="empty-text">Loading CATs...</p>';
   try {
     const res = await fetch('/api/my-course-cats', {
       headers: { 'Authorization': 'Bearer ' + token }

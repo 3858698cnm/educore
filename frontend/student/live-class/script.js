@@ -9,6 +9,20 @@ if (!token || role !== 'student') {
 
 const socket = io();
 
+socket.on('disconnect', function() {
+  const reconnectMsg = document.getElementById('reconnectMsg');
+  if (reconnectMsg) reconnectMsg.classList.remove('hidden');
+});
+
+socket.on('connect', function() {
+  const reconnectMsg = document.getElementById('reconnectMsg');
+  if (reconnectMsg) reconnectMsg.classList.add('hidden');
+
+  if (currentSessionId) {
+    socket.emit('student-join-class', { sessionId: currentSessionId, studentId, studentName });
+  }
+});
+
 let currentSessionId = null;
 let checksReceived = 0;
 let checksResponded = 0;
