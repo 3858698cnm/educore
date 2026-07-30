@@ -333,4 +333,4 @@ function setupLiveClassSockets(io) {
   });
 }
 
-module.exports = setupLiveClassSockets;s
+module.exports = setupLiveClassSockets;
