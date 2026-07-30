@@ -104,6 +104,11 @@ async function startCat(catId) {
       questionsArea.appendChild(qDiv);
     });
 
+    currentCat.questionMap = data.questions.map(q => ({
+      originalQuestionIndex: q.originalQuestionIndex,
+      optionOriginalIndexes: q.optionOriginalIndexes
+    }));
+
     timeLeftSeconds = data.timeLimitMinutes * 60;
     updateTimerDisplay();
     timerInterval = setInterval(function() {
@@ -150,7 +155,7 @@ async function submitCat() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({ answers, unitId: currentCat.unitId })
+      body: JSON.stringify({ answers, unitId: currentCat.unitId, questionMap: currentCat.questionMap })
     });
 
     const data = await res.json();

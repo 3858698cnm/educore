@@ -6,6 +6,14 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
+const requiredEnvVars = ['MONGO_URI', 'JWT_SECRET', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+const missingVars = requiredEnvVars.filter(key => !process.env[key]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars.join(', '));
+  console.error('Please add them in Render → Environment tab, then redeploy.');
+  process.exit(1);
+}
 const path = require('path');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;

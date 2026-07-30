@@ -88,7 +88,17 @@ router.get('/api/my-course-cats', authMiddleware, async (req, res) => {
   }
 });
 
-// Get one CAT's full questions to take it
+// Shuffle helper - randomizes array order
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Get one CAT's full questions to take it (shuffled per student)
 router.get('/api/cats/:id/take', authMiddleware, async (req, res) => {
   try {
     const cat = await Cat.findById(req.params.id);
@@ -99,10 +109,20 @@ router.get('/api/cats/:id/take', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'You have already attempted this CAT' });
     }
 
-    const questionsForStudent = cat.questions.map(q => ({
-      questionText: q.questionText,
-      options: q.options
-    }));
+    const shuffledQuestions = shuffleArray(cat.questions);
+
+    const questionsForStudent = shuffledQuestions.map(q => {
+      const originalIndex = cat.questions.indexOf(q);
+      const optionsWithIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+      const shuffledOptions = shuffleArray(optionsWithIndex);
+
+      return {
+        originalQuestionIndex: originalIndex,
+        questionText: q.questionText,
+        options: shuffledOptions.map(o => o.text),
+        optionOriginalIndexes: shuffledOptions.map(o => o.originalIndex)
+      };
+    });
 
     res.json({
       _id: cat._id,
@@ -118,7 +138,7 @@ router.get('/api/cats/:id/take', authMiddleware, async (req, res) => {
 // Submit CAT answers and get auto-graded
 router.post('/api/cats/:id/submit', authMiddleware, async (req, res) => {
   try {
-    const { answers, unitId } = req.body;
+    const { answers, unitId, questionMap } = req.body;
 
     const alreadyDone = await CatResult.findOne({ catId: req.params.id, studentId: req.user.id });
     if (alreadyDone) {
@@ -129,8 +149,12 @@ router.post('/api/cats/:id/submit', authMiddleware, async (req, res) => {
     if (!cat) return res.status(404).json({ message: 'CAT not found' });
 
     let correctCount = 0;
-    cat.questions.forEach((q, index) => {
-      if (answers[index] === q.correctAnswerIndex) {
+    answers.forEach((selectedShuffledIndex, position) => {
+      if (selectedShuffledIndex === -1) return;
+      const map = questionMap[position];
+      const originalQuestion = cat.questions[map.originalQuestionIndex];
+      const selectedOriginalIndex = map.optionOriginalIndexes[selectedShuffledIndex];
+      if (selectedOriginalIndex === originalQuestion.correctAnswerIndex) {
         correctCount++;
       }
     });
