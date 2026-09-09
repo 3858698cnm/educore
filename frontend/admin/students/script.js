@@ -12,34 +12,51 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
   window.location.href = '/login';
 });
 
+let allStudentsData = [];
+
 // LOAD ALL STUDENTS
 async function loadStudents() {
   try {
     const response = await fetch('/api/students', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    const students = await response.json();
-
-    const tbody = document.getElementById('studentTableBody');
-    tbody.innerHTML = '';
-
-    students.forEach(student => {
-      const date = new Date(student.createdAt).toLocaleDateString();
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${student.name}</td>
-        <td>${student.email}</td>
-        <td>${student.department || '-'}</td>
-        <td>${date}</td>
-        <td><button class="delete-btn" onclick="deleteUser('${student._id}')">Remove</button></td>
-      `;
-      tbody.appendChild(row);
-    });
-
+    allStudentsData = await response.json();
+    renderStudents(allStudentsData);
   } catch (err) {
     console.log('Error loading students:', err);
   }
 }
+
+function renderStudents(students) {
+  const tbody = document.getElementById('studentTableBody');
+  tbody.innerHTML = '';
+
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No matching students found</td></tr>';
+    return;
+  }
+
+  students.forEach(student => {
+    const date = new Date(student.createdAt).toLocaleDateString();
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${student.name}</td>
+      <td>${student.email}</td>
+      <td>${student.department || '-'}</td>
+      <td>${date}</td>
+      <td><button class="delete-btn" onclick="deleteUser('${student._id}')">Remove</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+document.getElementById('studentSearch')?.addEventListener('input', function() {
+  const query = this.value.toLowerCase().trim();
+  const filtered = allStudentsData.filter(s =>
+    s.name.toLowerCase().includes(query) || s.email.toLowerCase().includes(query)
+  );
+  renderStudents(filtered);
+});
 
 // DELETE/REMOVE USER
 async function deleteUser(id) {
