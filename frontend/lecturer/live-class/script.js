@@ -203,6 +203,12 @@ document.getElementById('startBtn').addEventListener('click', function() {
   });
 });
 
+// Notify students if lecturer leaves the page while sharing
+window.addEventListener('beforeunload', function() {
+  if (isCameraOn || isScreenSharing) {
+    socket.emit('lecturer-video-stopped', { sessionId });
+  }
+});
 // CLASS STARTED
 socket.on('class-started', function(data) {
   sessionId = data.sessionId;
