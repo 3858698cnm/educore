@@ -291,13 +291,12 @@ async function startStreamToStudents(stream) {
 // STUDENT IS READY FOR STREAM
 socket.on('student-ready-for-stream', async (data) => {
   const { studentSocketId } = data;
-  const activeStream = screenStream || localStream;
-  if (activeStream) {
+  if (currentOutgoingStream) {
     if (peerConnections[studentSocketId]) {
       peerConnections[studentSocketId].close();
       delete peerConnections[studentSocketId];
     }
-    await createPeerConnection(studentSocketId, activeStream);
+    await createPeerConnection(studentSocketId, currentOutgoingStream);
   }
 });
 
@@ -334,6 +333,8 @@ function getActiveVideoStream() {
   return screenStream || localStream;
 }
 
+let currentOutgoingStream = null;
+
 async function rebuildOutgoingStream() {
   const videoStream = getActiveVideoStream();
   const combined = new MediaStream();
@@ -349,6 +350,7 @@ async function rebuildOutgoingStream() {
   console.log('rebuildOutgoingStream - tracks being sent:', combined.getTracks().map(t => t.kind + ' (enabled: ' + t.enabled + ')'));
 
   if (combined.getTracks().length === 0) {
+    currentOutgoingStream = null;
     for (let socketId in peerConnections) {
       peerConnections[socketId].close();
     }
@@ -357,6 +359,7 @@ async function rebuildOutgoingStream() {
     return;
   }
 
+  currentOutgoingStream = combined;
   await startStreamToStudents(combined);
 }
 
