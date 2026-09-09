@@ -28,7 +28,7 @@ router.get('/api/unit-students/:unitId', authMiddleware, async (req, res) => {
     const students = await User.find({
       role: 'student',
       status: 'approved',
-      courseId: unit.courseId
+      courseId: { $in: unit.courseIds }
     }).select('-password');
 
     const attendance = await Attendance.find({ unitId: req.params.unitId });

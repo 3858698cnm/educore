@@ -26,7 +26,7 @@ router.get('/api/units', authMiddleware, async (req, res) => {
 
 router.get('/api/units/course/:courseId', authMiddleware, async (req, res) => {
   try {
-    const units = await Unit.find({ courseId: req.params.courseId });
+    const units = await Unit.find({ courseIds: req.params.courseId });
     res.json(units);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -45,12 +45,15 @@ router.get('/api/my-units', authMiddleware, async (req, res) => {
 
 router.post('/api/units', authMiddleware, async (req, res) => {
   try {
-    const { name, code, courseId, lecturerId, attendanceWeight } = req.body;
+    const { name, code, courseIds, lecturerId, attendanceWeight } = req.body;
     const existing = await Unit.findOne({ code });
     if (existing) {
       return res.status(400).json({ message: 'Unit code already exists' });
     }
-    const newUnit = new Unit({ name, code, courseId, lecturerId, attendanceWeight });
+    if (!courseIds || courseIds.length === 0) {
+      return res.status(400).json({ message: 'Please select at least one course' });
+    }
+    const newUnit = new Unit({ name, code, courseIds, lecturerId, attendanceWeight });
     await newUnit.save();
     res.status(201).json(newUnit);
   } catch (err) {
@@ -60,10 +63,14 @@ router.post('/api/units', authMiddleware, async (req, res) => {
 // Update a unit's assigned lecturer
 router.put('/api/units/:id', authMiddleware, async (req, res) => {
   try {
-    const { lecturerId } = req.body;
+    const { lecturerId, courseIds } = req.body;
+    const updateData = {};
+    if (lecturerId !== undefined) updateData.lecturerId = lecturerId || null;
+    if (courseIds !== undefined) updateData.courseIds = courseIds;
+
     const updated = await Unit.findByIdAndUpdate(
       req.params.id,
-      { lecturerId: lecturerId || null },
+      updateData,
       { new: true }
     );
     res.json(updated);
@@ -88,7 +95,7 @@ router.get('/api/student-units', authMiddleware, async (req, res) => {
     if (!student.courseId) {
       return res.json([]);
     }
-    const units = await Unit.find({ courseId: student.courseId });
+    const units = await Unit.find({ courseIds: student.courseId });
     res.json(units);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

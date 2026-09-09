@@ -57,7 +57,7 @@ function setupLiveClassSockets(io) {
         if (unit) {
           const student = await User.findById(studentId);
           if (student && student.courseId &&
-              unit.courseId.toString() !== student.courseId.toString()) {
+              !unit.courseIds.includes(student.courseId.toString())) {
             socket.emit('join-error', {
               message: 'This class is not for your enrolled course'
             });

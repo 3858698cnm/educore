@@ -80,7 +80,7 @@ router.get('/api/my-profile', authMiddleware, async (req, res) => {
     const course = await Course.findById(student.courseId);
     const department = await Department.findById(student.departmentId);
     const faculty = await Faculty.findById(student.facultyId);
-    const units = await Unit.find({ courseId: student.courseId });
+    const units = await Unit.find({ courseIds: student.courseId });
 
     const unitsWithLecturers = await Promise.all(units.map(async (unit) => {
       const lecturer = unit.lecturerId

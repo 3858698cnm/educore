@@ -69,7 +69,7 @@ router.get('/api/my-course-cats', authMiddleware, async (req, res) => {
       return res.json({ cats: [], units: [] });
     }
 
-    const units = await Unit.find({ courseId: student.courseId });
+    const units = await Unit.find({ courseIds: student.courseId });
     const unitIds = units.map(u => u._id.toString());
 
     const cats = await Cat.find({ unitId: { $in: unitIds } }).sort({ createdAt: -1 });

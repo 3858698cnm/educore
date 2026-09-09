@@ -93,7 +93,7 @@ router.get('/api/my-course-materials', authMiddleware, async (req, res) => {
       return res.json({ materials: [], units: [] });
     }
 
-    const units = await Unit.find({ courseId: student.courseId });
+    const units = await Unit.find({ courseIds: student.courseId });
     const unitIds = units.map(u => u._id.toString());
 
     const materials = await Material.find({

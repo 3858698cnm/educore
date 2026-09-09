@@ -15,7 +15,7 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
 let coursesList = [];
 let lecturersList = [];
 
-// Load courses dropdown
+// Load courses checkboxes
 async function loadCoursesDropdown() {
   try {
     const response = await fetch('/api/courses', {
@@ -23,14 +23,18 @@ async function loadCoursesDropdown() {
     });
     coursesList = await response.json();
 
-    const select = document.getElementById('unitCourse');
-    select.innerHTML = '<option value="">Select Course</option>';
+    const container = document.getElementById('courseCheckboxes');
+    container.innerHTML = '';
 
     coursesList.forEach(course => {
-      const option = document.createElement('option');
-      option.value = course._id;
-      option.textContent = course.name;
-      select.appendChild(option);
+      const label = document.createElement('label');
+      label.style.display = 'block';
+      label.style.marginBottom = '6px';
+      label.innerHTML = `
+        <input type="checkbox" value="${course._id}" class="courseCheckbox">
+        ${course.name}
+      `;
+      container.appendChild(label);
     });
   } catch (err) {
     console.log('Error loading courses:', err);
@@ -76,8 +80,14 @@ async function loadUnits() {
     }
 
     units.forEach(unit => {
-      const course = coursesList.find(c => c._id === unit.courseId);
-      const courseName = course ? course.name : '-';
+      const unitCourseNames = (unit.courseIds || [])
+        .map(id => {
+          const c = coursesList.find(course => course._id === id);
+          return c ? c.name : null;
+        })
+        .filter(Boolean)
+        .join(', ');
+      const courseName = unitCourseNames || '-';
 
       let lecturerOptions = '<option value="">Not assigned</option>';
       lecturersList.forEach(lect => {
@@ -109,14 +119,16 @@ async function loadUnits() {
 document.getElementById('addBtn').addEventListener('click', async function() {
   const name = document.getElementById('unitName').value.trim();
   const code = document.getElementById('unitCode').value.trim();
-  const courseId = document.getElementById('unitCourse').value;
   const lecturerId = document.getElementById('unitLecturer').value;
   const attendanceWeight = document.getElementById('attendanceWeight').value || 10;
   const messageEl = document.getElementById('message');
 
-  if (!name || !code || !courseId) {
+  const courseIds = Array.from(document.querySelectorAll('.courseCheckbox:checked'))
+    .map(cb => cb.value);
+
+  if (!name || !code || courseIds.length === 0) {
     messageEl.style.color = '#e11d48';
-    messageEl.textContent = 'Unit name, code and course are required';
+    messageEl.textContent = 'Unit name, code, and at least one course are required';
     return;
   }
 
@@ -127,7 +139,7 @@ document.getElementById('addBtn').addEventListener('click', async function() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify({ name, code, courseId, lecturerId, attendanceWeight })
+      body: JSON.stringify({ name, code, courseIds, lecturerId, attendanceWeight })
     });
 
     const data = await response.json();
@@ -137,8 +149,8 @@ document.getElementById('addBtn').addEventListener('click', async function() {
       messageEl.textContent = 'Unit added successfully';
       document.getElementById('unitName').value = '';
       document.getElementById('unitCode').value = '';
-      document.getElementById('unitCourse').value = '';
       document.getElementById('unitLecturer').value = '';
+      document.querySelectorAll('.courseCheckbox').forEach(cb => cb.checked = false);
       loadUnits();
     } else {
       messageEl.style.color = '#e11d48';

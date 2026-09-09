@@ -39,13 +39,17 @@
         <input type="text" id="unitCode" placeholder="Unit Code (e.g. CS201)">
       </div>
       <div class="form-row">
-        <select id="unitCourse">
-          <option value="">Select Course</option>
-        </select>
         <select id="unitLecturer">
           <option value="">Select Lecturer</option>
         </select>
         <input type="number" id="attendanceWeight" value="10" placeholder="Attendance Weight">
+      </div>
+
+      <label style="display:block;margin-top:10px;margin-bottom:6px;font-weight:bold;">
+        Assign to Course(s)
+      </label>
+      <div id="courseCheckboxes" style="background:#f9fafb;padding:12px;border-radius:6px;max-height:180px;overflow-y:auto;">
+        <!-- Checkboxes added dynamically -->
       </div>
       <button id="addBtn">Add Unit</button>
       <p class="message" id="message"></p>
@@ -56,7 +60,7 @@
         <tr>
           <th>Unit Name</th>
           <th>Code</th>
-          <th>Course</th>
+          <th>Course(s)</th>
           <th>Lecturer</th>
           <th>Attendance Weight</th>
           <th>Actions</th>
