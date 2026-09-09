@@ -57,7 +57,20 @@ router.post('/api/units', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
+// Update a unit's assigned lecturer
+router.put('/api/units/:id', authMiddleware, async (req, res) => {
+  try {
+    const { lecturerId } = req.body;
+    const updated = await Unit.findByIdAndUpdate(
+      req.params.id,
+      { lecturerId: lecturerId || null },
+      { new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 router.delete('/api/units/:id', authMiddleware, async (req, res) => {
   try {
     await Unit.findByIdAndDelete(req.params.id);

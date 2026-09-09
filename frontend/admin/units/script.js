@@ -79,15 +79,22 @@ async function loadUnits() {
       const course = coursesList.find(c => c._id === unit.courseId);
       const courseName = course ? course.name : '-';
 
-      const lecturer = lecturersList.find(l => l._id === unit.lecturerId);
-      const lecturerName = lecturer ? lecturer.name : 'Not assigned';
+      let lecturerOptions = '<option value="">Not assigned</option>';
+      lecturersList.forEach(lect => {
+        const selected = unit.lecturerId === lect._id ? 'selected' : '';
+        lecturerOptions += `<option value="${lect._id}" ${selected}>${lect.name}</option>`;
+      });
 
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${unit.name}</td>
         <td>${unit.code}</td>
         <td>${courseName}</td>
-        <td>${lecturerName}</td>
+        <td>
+          <select onchange="reassignLecturer('${unit._id}', this.value)" style="padding:6px;border-radius:4px;">
+            ${lecturerOptions}
+          </select>
+        </td>
         <td>${unit.attendanceWeight}%</td>
         <td><button class="delete-btn" onclick="deleteUnit('${unit._id}')">Delete</button></td>
       `;
@@ -165,3 +172,23 @@ async function init() {
 }
 
 init();
+async function reassignLecturer(unitId, lecturerId) {
+  try {
+    const res = await fetch('/api/units/' + unitId, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ lecturerId })
+    });
+
+    if (res.ok) {
+      loadUnits();
+    } else {
+      alert('Failed to update lecturer assignment');
+    }
+  } catch (err) {
+    console.log('Error reassigning lecturer:', err);
+  }
+}
