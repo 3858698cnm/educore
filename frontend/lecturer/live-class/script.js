@@ -346,6 +346,8 @@ async function rebuildOutgoingStream() {
     combined.addTrack(micTrack);
   }
 
+  console.log('rebuildOutgoingStream - tracks being sent:', combined.getTracks().map(t => t.kind + ' (enabled: ' + t.enabled + ')'));
+
   if (combined.getTracks().length === 0) {
     for (let socketId in peerConnections) {
       peerConnections[socketId].close();
