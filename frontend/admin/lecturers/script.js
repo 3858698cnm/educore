@@ -12,34 +12,51 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
   window.location.href = '/login';
 });
 
+let allLecturersData = [];
+
 // LOAD ALL LECTURERS
 async function loadLecturers() {
   try {
     const response = await fetch('/api/lecturers', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    const lecturers = await response.json();
-
-    const tbody = document.getElementById('lecturerTableBody');
-    tbody.innerHTML = '';
-
-    lecturers.forEach(lect => {
-      const date = new Date(lect.createdAt).toLocaleDateString();
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${lect.name}</td>
-        <td>${lect.email}</td>
-        <td>${lect.department || '-'}</td>
-        <td>${date}</td>
-        <td><button class="delete-btn" onclick="deleteUser('${lect._id}')">Remove</button></td>
-      `;
-      tbody.appendChild(row);
-    });
-
+    allLecturersData = await response.json();
+    renderLecturers(allLecturersData);
   } catch (err) {
     console.log('Error loading lecturers:', err);
   }
 }
+
+function renderLecturers(lecturers) {
+  const tbody = document.getElementById('lecturerTableBody');
+  tbody.innerHTML = '';
+
+  if (lecturers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No matching lecturers found</td></tr>';
+    return;
+  }
+
+  lecturers.forEach(lect => {
+    const date = new Date(lect.createdAt).toLocaleDateString();
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${lect.name}</td>
+      <td>${lect.email}</td>
+      <td>${lect.department || '-'}</td>
+      <td>${date}</td>
+      <td><button class="delete-btn" onclick="deleteUser('${lect._id}')">Remove</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+document.getElementById('lecturerSearch')?.addEventListener('input', function() {
+  const query = this.value.toLowerCase().trim();
+  const filtered = allLecturersData.filter(l =>
+    l.name.toLowerCase().includes(query) || l.email.toLowerCase().includes(query)
+  );
+  renderLecturers(filtered);
+});
 
 // DELETE/REMOVE USER
 async function deleteUser(id) {
